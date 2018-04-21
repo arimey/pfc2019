@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Pruebas con WebRTC P2P</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<style type="text/css">
+
+	</style>
+
+</head>
+<body>
+	<nav class="navbar navbar-light bg-light justify-content-between">
+		<div class="container">
+			<a class="navbar-brand">Mapaches stream</a>
+			<form class="form-inline" action="/logout" method="get">
+		  		<!--<input id="nickLabel" class="form-control mr-sm-2" type="search" placeholder="Introducir nombre..." aria-label="Search">
+		    	<button id="botonNick" class="btn btn-outline-info my-2 my-sm-0" type="button">Aceptar</button>-->
+		    	<input id="userData" type="hidden" value="<%= userJSON %>" />
+		    	<input id="userType" type="hidden" value="<%= permission %>" />
+		    	<h3>Bienvenid@ <strong><%= user %></strong> &nbsp;&nbsp;</h3>
+		    	<button id="exitButton" class="btn btn-outline-info my-2 my-sm-0" type="submit">Salir</button>
+		  	</form>
+		</div>
+	</nav>
+	<div class="container">
+		<div id="root">
+
+		</div>
+		</table>
+	</div> 
+
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+  	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+	<script src="src/build/roomsFinal.js"></script>
+	<script src="src/build/bundleRooms.js"></script>
+
+</body>
+</html>
+

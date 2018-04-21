@@ -1,0 +1,26 @@
+
+----Cosas que tengo que implementera----
+
+Hacer una topología en estrella
+Poner el paperjs para poder enviar también cosas que se escriben en una pizarra
+Investigar acerca del aguante de webrtc
+Cambiar el chat hacia el cuadro pequeño y poner en el grande el canvas del paper
+Poner herramientas para el canvas
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----Cosas que tengo que corregir----
+
+
