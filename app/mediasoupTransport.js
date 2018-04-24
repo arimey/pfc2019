@@ -18,6 +18,7 @@ class mediasoupTransport extends EventEmitter {
     }
     catch (error) {
       this.close();
+      console.log("ROOMMMM");
       throw error;
     }
 
@@ -26,10 +27,10 @@ class mediasoupTransport extends EventEmitter {
       console.log("nuevo peer creado: %s", peer.name);
       this._peers.set(peer.name, peer);
       var keys = Array.from(this._peers.keys());
-      this._ioTransport.emit("newUserConBox", keys);
+      this._ioTransport.sockets.in(this._roomId).emit("newUserConBox", keys);
 
       peer.on("notify", (notification) => {
-        this._ioTransport.emit("peerNotification", notification);
+        this._ioTransport.sockets.in(this._roomId).emit("peerNotification", notification);
       });
 
       peer.on("close", (originator) => {
@@ -50,7 +51,7 @@ class mediasoupTransport extends EventEmitter {
     var peer = this._peers.get(name);
     this._peers.delete(name);
     var keys = Array.from(this._peers.keys());
-    this._ioTransport.emit("newUserConBox", keys);
+    this._ioTransport.sockets.in(this._roomId).emit("newUserConBox", keys);
     if (this._mediaRoom.getPeerByName(name)) {
       this._mediaRoom.getPeerByName(name).close();
     }

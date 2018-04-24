@@ -7,17 +7,18 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var passport = require('passport');
 var mediasoup = require("mediasoup");
-
-var salas = [];
-
+var fs = require('fs');
 var session = require('express-session');
-
 var configDB = require('./config/database.js');
-
+var salas = [];
 var app_port = process.env.PORT || 3000;
 var app_host = process.env.HOST || '127.0.0.1';
+var optSSL = {
+	key : fs.readFileSync('./keys/campus.key'),
+	cert : fs.readFileSync('./keys/campus.crt')
+}
 
-var server = require('http').createServer(app);
+var server = require('https').createServer(optSSL, app);
 var io = require('socket.io')(server);
 
 var pubIp = require('public-ip');
@@ -47,64 +48,76 @@ app.use(flash());
 
 app.use('/src', express.static(__dirname + '/src'));
 
-
 var mediasoupRooms = require("./app/mediasoupTransport.js");
 var mediasoupRoomsMap = new Map();
-var room;
+var idRoomSocket = new Map();
+var socketPeer = new Map();
+
 
 io.on('connection', function(client) {
-	var socketPeer = new Map();
+
 	console.log('Client ' + client.id + ' connected to socket.');
 	client.on('startMediasoup', function(roomId) {
-		console.log('Creating room mediasoup server');
+		console.log(roomId);
 		if (!mediasoupRoomsMap.has(roomId)) {
 			try {
-				console.log("no hay room");
-				room = new mediasoupRooms(roomId, mediasoup, io);
+				var room = new mediasoupRooms(roomId, mediasoup, io);
+				idRoomSocket.set(client.id, roomId);
 				mediasoupRoomsMap.set(roomId, room);
+				client.join(roomId);
+				console.log('Creating room mediasoup server');
 			}
 			catch (error) {
 				console.log(error);
 			}
 		}
 		else {
-			room = mediasoupRoomsMap.get(roomId);
+			if (!idRoomSocket.has(client.id)) {
+				client.join(roomId);
+				idRoomSocket.set(client.id, roomId);
+			}
+			//room = mediasoupRoomsMap.get(roomId);
 		}
 	});
 
 	client.on("mediasoupRoomRequest", (request,fn) => {
+		console.log("Id del client : " + idRoomSocket.get(client.id));
+		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
 		switch(request.body.target) {
 			case "peer" : {
 				console.log(request.body.method);
-				room.manageMediasoupPeerRequest(request, fn);
+				roomLocal.manageMediasoupPeerRequest(request, fn);
 				break;
 			}
 			case "room" : {
 				if (request.body.method == "join") {
 					socketPeer.set(client.id, request.body.peerName);
 				}
-				room.manageMediasoupRoomRequest(request.body, fn);
+				roomLocal.manageMediasoupRoomRequest(request.body, fn);
 				break;
 			}
 		}
 	});
 
 	client.on("mediasoupRoomNotification", (notification) => {
+		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
 		console.log("NOTIFICATION " + notification.body.method);
 		switch(notification.body.target) {
 			case "peer" : {
-				room.manageMediasoupPeerNotification(notification);
+				roomLocal.manageMediasoupPeerNotification(notification);
 				break;
 			}
 		}
 	});
 
 	client.on("peerLeaving", (peerName) => {
+		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
 		console.log("Cerrando peer 1");
-		room.closePeer(peerName);
+		roomLocal.closePeer(peerName);
 	});
 
 	client.on("disconnect", () => {
+		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
 		var nombre = socketPeer.get(client.id);
 		if (typeof nombre !== "undefined") {
 			console.log("Se ha desconectado: " + nombre);

@@ -8,7 +8,7 @@ var mediasoupObj;
 
 $(document).ready(() => {
 	var socket = io();
-	mediasoupObj = new mediasoupApp(socket);
+	mediasoupObj = new mediasoupApp(socket, $('#room').val());
 	ReactDOM.render(<ConnectionBox con={socket}/>, document.getElementById('usersBox'));
 	mediasoupObj.join();
 	$('#formExit').submit(() => {

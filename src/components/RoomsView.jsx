@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 
-class RoomsView extends React.Component {
+export default class RoomsView extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {items: []}
@@ -24,7 +24,7 @@ class RoomsView extends React.Component {
 				<tbody>
 				{items.map((item, index) => {
 					return (
-						<tr>
+						<tr key={index}>
 							<th scope="row">
 								{index}
 							</th>
@@ -32,8 +32,7 @@ class RoomsView extends React.Component {
 								{item.name}
 							</td>
 							<td>
-								{(this.props.permission == 2 || this.props.permission == 1) ?
-									item.state == "Offline" ?
+								{item.state == "Offline" ?
 										<h4><a href={"/sala/" + item.name} className="badge badge-dark">
 											{item.state}
 										</a></h4>
@@ -41,7 +40,7 @@ class RoomsView extends React.Component {
 										<h4><a href={"/sala/" + item.name} className="badge badge-primary">
 											{item.state}
 										</a></h4>
-								:
+								/*:
 									item.state == "Offline" ?
 										<h4><span className="badge badge-pill badge-dark">
 											{item.state}
@@ -49,7 +48,7 @@ class RoomsView extends React.Component {
 									:
 										<h4><a href={"/sala/" + item.name} className="badge badge-primary">
 											{item.state}
-										</a></h4>
+										</a></h4>*/
 
 								}
 							</td>
@@ -62,7 +61,5 @@ class RoomsView extends React.Component {
 		)
 	}
 }
-
-export default RoomsView;
 
 //ReactDOM.render(<RoomsView />, document.getElementById('root'));

@@ -12,7 +12,7 @@ module.exports = function(app, passport) {
 	});
 
 	app.post('/', passport.authenticate('local-login', {
-		successRedirect : '/index2',
+		successRedirect : '/rooms',
 		failureRedirect : '/',
 		failuerFlash: true
 	}));
@@ -22,11 +22,23 @@ module.exports = function(app, passport) {
 	});
 
 	app.post('/registro', passport.authenticate('local-signup', {
-			successRedirect : '/index2',
+			successRedirect : '/rooms',
 			failureRedirect : '/registro',
 			failureFlash : true
-
 	}));
+
+	app.get('/rooms', isLoggedIn, function(req, res) {
+		var userJSON;
+		var Subject = require('./models/subjects');
+		User.find({ username: req.user.username }, (err, user) => {
+			if (err) throw err;
+			Subject.populate(user, {path: "subjects"}, (err, user) => {
+				userJSON = user;
+				console.log(user[0].subjects);
+				res.render('indexRooms.html', {user: userJSON[0].username, userJSON: JSON.stringify(userJSON[0].subjects), permission: JSON.stringify(userJSON[0].userType)});
+			});
+		});
+	});
 
 	app.get('/index2', isLoggedIn, function(req, res) {
 		var userJSON;
@@ -35,13 +47,14 @@ module.exports = function(app, passport) {
 			if (err) throw err;
 			Subject.populate(user, {path: "subjects"}, (err, user) => {
 				userJSON = user;
+				console.log(user[0].subjects);
 				res.render('indexMediasoup.html', {user: userJSON[0].username, userJSON: JSON.stringify(userJSON[0].subjects), permission: JSON.stringify(userJSON[0].userType)});
 			});
 		});
 	});
 
 	app.get('/sala/:id', function(req, res) {
-		res.render('index.html', { user: req.user.username, room: req.params.id, permission: req.user.userType });
+		res.render('indexMediasoup.html', { user: req.user.username, room: req.params.id, permission: req.user.userType });
 	});
 
 	app.get('/index', isLoggedIn, function(req, res) {

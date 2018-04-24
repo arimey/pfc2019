@@ -36,4 +36,12 @@ gulp.task('build3', function() {
 		.pipe(gulp.dest('./src/build'))
 	})
 
-gulp.task('default', ['build3']);
+	gulp.task('build4', function() {
+		return browserify({ entries: './src/mediaRoom', extensions: ['.js'], debug: true})
+			.transform('babelify', { presets: ['es2015', 'react'] })
+			.bundle()
+			.pipe(source('roomsFinal2.js'))
+			.pipe(gulp.dest('./src/build'))
+		})
+
+gulp.task('default', ['build3', 'build4']);

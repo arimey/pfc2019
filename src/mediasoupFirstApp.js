@@ -3,9 +3,9 @@ import * as mediasoupClient from 'mediasoup-client';
 //import ReactDOM from 'react-dom';
 
 class mediasoup {
-  constructor(socket) {
+  constructor(socket, idRoom) {
     this.transportSocket = socket;
-    this.transportSocket.emit("startMediasoup", 1);
+    this.transportSocket.emit("startMediasoup", idRoom);
     this.stream = new MediaStream();
     this.consumers = new Map();
     this.peers = new Map();
@@ -76,8 +76,6 @@ class mediasoup {
   }
 
   quit() {
-
-    //this.transportSocket.emit("peerLeaving", this.name);
     this.room.leave();
     for (var consumer of this.room.consumers) {
       consumer.close();
@@ -88,11 +86,6 @@ class mediasoup {
     for (var transport of this.room.transports) {
       transport.close();
     }
-    /*for (var producer of this.rooms.producers) {
-        transport.pause();
-        transport.close();
-    }*/
-    //this.room.leave();
   }
 
   handlePeer(peer) {
@@ -100,6 +93,7 @@ class mediasoup {
       console.log("Tengo un nuevo consumer: " + consumer.peer.name);
       this.handleConsumer(consumer);
     });
+
     for (var consumer of peer.consumers) {
       console.log("Consumer name: " + peer.name);
       this.handleConsumer(consumer);
@@ -109,7 +103,6 @@ class mediasoup {
     peer.on("close", () => {
       console.log("Peer closed");
     });
-
 
   }
 
