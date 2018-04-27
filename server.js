@@ -52,6 +52,7 @@ var mediasoupRooms = require("./app/mediasoupTransport.js");
 var mediasoupRoomsMap = new Map();
 var idRoomSocket = new Map();
 var socketPeer = new Map();
+var presentationUrls = new Map();
 
 
 io.on('connection', function(client) {
@@ -77,6 +78,10 @@ io.on('connection', function(client) {
 				idRoomSocket.set(client.id, roomId);
 			}
 			//room = mediasoupRoomsMap.get(roomId);
+		}
+		if (presentationUrls.has(roomId)) {
+			let presentationUrl = presentationUrls.get(roomId);
+			io.sockets.in(roomId).emit('newPresentation', presentationUrl);
 		}
 	});
 
@@ -125,6 +130,13 @@ io.on('connection', function(client) {
 
 		}
 
+	});
+
+	client.on("sendingPresentation", (data) => {
+		console.log("Me han enviado presentación desde " + data.key);
+		presentationUrls.set(data.key, data.val);
+		io.emit('newPresentation', data.val);
+		//io.sockets.in(data.key).emit('newPresentation', data.value);
 	});
 
 

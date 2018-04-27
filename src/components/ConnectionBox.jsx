@@ -17,17 +17,21 @@ export default class ConnectionBox extends React.Component {
 		var items = this.state.users;
 
 		return (
-			<div>
-				<ul className="list-group">
-					{items.map((item, index) =>
-
-						<li key={index} className="list-group-item">
-							{item}
-						</li>
+			<div className="scrollable">
+				<table className="table table-hover">
+					<tbody>
+						{items.map((item, index) =>
+							<tr key={index}>
+								<td>{item}</td>
+							</tr>
+							/*<li key={index} className="list-group-item">
+								{item}
+								</li>*/
 
 					)}
 
-			</ul>
+					</tbody>
+				</table>
 		</div>
 		)
 	}

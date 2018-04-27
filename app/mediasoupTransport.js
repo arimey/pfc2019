@@ -18,7 +18,6 @@ class mediasoupTransport extends EventEmitter {
     }
     catch (error) {
       this.close();
-      console.log("ROOMMMM");
       throw error;
     }
 

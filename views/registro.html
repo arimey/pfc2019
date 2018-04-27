@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>Pruebas con WebRTC P2P</title>
+  <title>Campus Virtual</title>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 	<style type="text/css">
-		.wrapper {    
+		.wrapper {
 			margin-top: 80px;
 			margin-bottom: 20px;
 		}
@@ -18,7 +18,7 @@
 		  padding: 30px 38px 66px;
 		  margin: 0 auto;
 		  background-color: #eee;
-		  border: 3px dotted rgba(0,0,0,0.1);  
+		  border: 3px dotted rgba(0,0,0,0.1);
 		  }
 
 		.form-signin-heading {
@@ -40,12 +40,12 @@
 
 </head>
 <body>
-	
+
 	<div class = "container">
 		<div class="wrapper">
-			<form action="/registro" method="post" name="Login_Form" class="form-signin">       
-			    <h3 class="form-signin-heading colorH">MapacheStream</h3>
-			    <h4 class="form-signin-heading">Registro</h4>
+			<form action="/registro" method="post" name="Login_Form" class="form-signin">
+			    <h3 class="form-signin-heading colorH">PFC</h3>
+			    <h4 class="form-signin-heading">ULPGC</h4>
 					<hr class="colorgraph"><br>
 					<input id="mensajeServidor" type="hidden" value="<%= JSON.stringify(message) %>" />
 					<div id="alertMsg" class="alert alert-primary" role="alert">
@@ -53,15 +53,15 @@
 					</div>
 					<input type="text" class="form-control" name="user" placeholder="Usuario" required="" autofocus="" />
 					<input type="email" class="form-control" name="email" placeholder="Correo electrónico" required="" autofocus="" />
-					<input type="password" class="form-control" name="pass" placeholder="Contraseña" required=""/>     	
-					<input type="password" class="form-control" name="passConf" placeholder="Repetir contraseña" required=""/>  	  
-				 
-					<button class="btn btn-lg btn-primary btn-block"  name="Submit" value="Login" type="Submit">Registrar</button>  
+					<input type="password" class="form-control" name="pass" placeholder="Contraseña" required=""/>
+					<input type="password" class="form-control" name="passConf" placeholder="Repetir contraseña" required=""/>
+
+					<button class="btn btn-lg btn-outline-dark btn-block"  name="Submit" value="Login" type="Submit">Registrar</button>
 					<br>
-					<br>		
-					<blockquote class="blockquote text-center">	
-					<p>Si tienes cuenta identifícate <a href="/" class="badge badge-primary">aquí.</a></p>
-			</form>			
+					<br>
+					<blockquote class="blockquote text-center">
+					<p>Si tienes cuenta identifícate <a href="/" class="badge badge-light">aquí.</a></p>
+			</form>
 		</div>
 	</div>
 

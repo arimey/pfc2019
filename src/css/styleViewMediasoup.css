@@ -1,0 +1,66 @@
+.scrollable {
+    overflow: scroll hidden;
+    padding: 0px;
+    margin: 0px;
+    height: 300px;
+    width: 100%;
+}
+
+.hiddenScroll {
+    overflow: hidden;
+    border: 1px solid #F5F5F5;
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+}
+
+.noMargin {
+    padding:0px;
+    margin:0px;
+    width: 100%;
+    height: 100%;
+    vertical-align: middle;
+    text-align: center;
+}
+
+#chatBox1 {
+    padding: 0px;
+    margin: 0px;
+}
+
+#usersBox1 {
+    padding: 0px;
+    margin: 0px;
+}
+
+#divInputChat {
+    padding: 0px;
+    margin: 0px;
+}
+
+#divLetTalk {
+    padding: 0px;
+    margin: 0px;
+    border: 1px solid #F5F5F5;
+}
+
+#exitButton {
+    height: 40px;
+    width: 40px;
+}
+
+#exitButton:hover {
+    cursor:pointer;
+}
+
+#videoCapture {
+    padding: 0px;
+    margin: 0px;
+    border: 1px solid #F5F5F5;
+}
+
+#board {
+    padding: 0px;
+    margin: 0px;
+    border: 1px solid #F5F5F5;
+}
