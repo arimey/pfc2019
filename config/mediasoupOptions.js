@@ -5,9 +5,11 @@ const options = {
   numWorkers      : 1,
   logLevel        : 'warn',
   logTags         : ['info', 'ice', 'dlts', 'rtp', 'srtp', 'rtcp', 'rbe', 'rtx'],
-  rtcIPv6         : false
-  /*rtcMinPort      : 40000,
-  rtcMaxPort      : 40010*/
+
+  rtcIPv6         : false,
+  /*rtcMinPort      : 20000,
+  rtcMaxPort      : 20100,*/
+
 }
 
 

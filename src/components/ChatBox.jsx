@@ -5,34 +5,21 @@ import io from 'socket.io-client';
 export default class ChatBox extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {users: []}
 	}
 
 	componentDidMount() {
-		this.props.con.on('newUserConBox', (users) => {
-			this.setState({ users: users });
+		
+		this.props.con.on('new message', (data) => {
+			$('#messagesBox').append("<li class='list-group-item'>" + data.name + ": " + data.msg + "</li>");
+			$('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
 		});
 	}
 	render() {
-		var items = this.state.users;
-
 		return (
-			<div className="scrollable">
-				<table className="table table-hover">
-					<tbody>
-						{items.map((item, index) =>
-							<tr key={index}>
-								<td>{item}</td>
-							</tr>
-							/*<li key={index} className="list-group-item">
-								{item}
-								</li>*/
-
-					)}
-
-					</tbody>
-				</table>
-		</div>
+			<div className="scrollable" id="chatBox">
+				<ul id="messagesBox" className="list-group">
+				</ul>
+			</div>
 		)
 	}
 }

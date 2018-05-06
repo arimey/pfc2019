@@ -29,7 +29,7 @@ var merge = require('merge-stream');
 	})*/
 
 gulp.task('build3', function() {
-	return browserify({ entries: './src/rooms', extensions: ['.js'], debug: true})
+	return browserify({ entries: './src/indexFinalRoom', extensions: ['.js'], debug: true})
 		.transform('babelify', { presets: ['es2015', 'react'] })
 		.bundle()
 		.pipe(source('roomsFinal.js'))
@@ -37,7 +37,7 @@ gulp.task('build3', function() {
 	})
 
 	gulp.task('build4', function() {
-		return browserify({ entries: './src/mediaRoom', extensions: ['.js'], debug: true})
+		return browserify({ entries: './src/indexRooms', extensions: ['.js'], debug: true})
 			.transform('babelify', { presets: ['es2015', 'react'] })
 			.bundle()
 			.pipe(source('roomsFinal2.js'))

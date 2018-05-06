@@ -1,4 +1,3 @@
-
 var express = require('express');
 var app = express();
 var util = require('util');
@@ -6,7 +5,8 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var passport = require('passport');
-var mediasoup = require("mediasoup");
+var mediasoupOptions = require("./config/mediasoupOptions");
+var mediasoup = require("mediasoup").Server(mediasoupOptions);
 var fs = require('fs');
 var session = require('express-session');
 var configDB = require('./config/database.js');
@@ -52,12 +52,13 @@ var mediasoupRooms = require("./app/mediasoupTransport.js");
 var mediasoupRoomsMap = new Map();
 var idRoomSocket = new Map();
 var socketPeer = new Map();
+var peerSocket = new Map();
 var presentationUrls = new Map();
 
 
 io.on('connection', function(client) {
-
 	console.log('Client ' + client.id + ' connected to socket.');
+	//Start mediasoup class, server and room.... for each room open
 	client.on('startMediasoup', function(roomId) {
 		console.log(roomId);
 		if (!mediasoupRoomsMap.has(roomId)) {
@@ -97,8 +98,14 @@ io.on('connection', function(client) {
 			case "room" : {
 				if (request.body.method == "join") {
 					socketPeer.set(client.id, request.body.peerName);
+					peerSocket.set(request.body.peerName, client.id);
+					roomLocal.updateSocketClients(socketPeer);
+					roomLocal.manageMediasoupRoomRequest(request.body, fn);
 				}
-				roomLocal.manageMediasoupRoomRequest(request.body, fn);
+				else {
+					roomLocal.manageMediasoupRoomRequest(request.body, fn);
+				}
+
 				break;
 			}
 		}
@@ -121,25 +128,45 @@ io.on('connection', function(client) {
 		roomLocal.closePeer(peerName);
 	});
 
-	client.on("disconnect", () => {
-		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
-		var nombre = socketPeer.get(client.id);
-		if (typeof nombre !== "undefined") {
-			console.log("Se ha desconectado: " + nombre);
-			//room.closePeer(nombre);
 
-		}
-
-	});
 
 	client.on("sendingPresentation", (data) => {
-		console.log("Me han enviado presentación desde " + data.key);
 		presentationUrls.set(data.key, data.val);
-		io.emit('newPresentation', data.val);
-		//io.sockets.in(data.key).emit('newPresentation', data.value);
+		io.sockets.in(data.key).emit('newPresentation', data.val);
 	});
 
+	client.on("newUserState", (data) => {
+		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
+		let roomId = idRoomSocket.get(client.id);
+		let statesMap = roomLocal.changePeerState(data.name, data.state, socketPeer);
+		io.sockets.in(roomId).emit("newUserState", statesMap);
+	});
 
+	client.on("chat message", (data) => {
+		console.log(data.user);
+		io.sockets.in(data.room).emit("new message", {msg: data.msg, name: data.user});
+	});
+
+	client.on("openAllPeers", (data) => {
+		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
+		roomLocal.openAllProducers(data, peerSocket);
+	});
+
+	client.on("closeAllPeers", (data) => {
+		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
+		roomLocal.closeAllProducers(data, peerSocket);
+	});
+
+	client.on("disconnect", () => {
+		/*let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
+		var nombre = socketPeer.get(client.id);
+		if (typeof nombre !== "undefined") {
+			console.log("Se ha desconectado: " + nombre);*
+			//room.closePeer(nombre);
+
+		}*/
+
+	});
 });
 
 

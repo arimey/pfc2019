@@ -11,9 +11,9 @@
 
 </head>
 <body>
-
+<div class="container">
     <nav class="navbar justify-content-between">
-        <div class="container">
+
             <a class="navbar-brand">PFC - ULPGC</a>
             <form id="formExit" class="form-inline" action="/logout" method="get">
                 <input id="userName" type="hidden" value="<%= user %>" />
@@ -23,23 +23,23 @@
 
                 <input type="image" id="exitButton" src="/src/imgs/exit.png" border="0" alt="submit" />
             </form>
-        </div>
-    </nav>
 
+    </nav>
+</div>
     <div class="container">
         <div class="row">
-            <div id="videoCapture" class="col-md-6 col-lg-6">
+            <div id="videoCaptureDiv" class="col-md-6 col-lg-6">
                 <!--<audio id="mediasoupAudio" autoplay></audio>-->
                 <video id="mediasoupVideo" autoplay controls></video>
             </div>
-            <div id="board" class="col-md-6 col-lg-6">
+            <div id="board" class="col-md-6 col-lg-6 align-item-center">
 
             </div>
         </div>
         <div class="row">
 
             <div id="chatBox1" class="col-md-8 col-lg-8">
-                <div id="chatBox" class="hiddenScroll">
+                <div id="chatBox2" class="hiddenScroll">
                 </div>
             </div>
 
@@ -49,19 +49,7 @@
             </div>
 
         </div>
-        <div class="row">
-            <div id="divInputChat" class="col-md-8 col-lg-8">
-                <div class="input-group">
-                    <input id="yourMessage" type="text" class="form-control" placeholder="Introduce texto a enviar...">
-                    <span class="input-group-btn">
-                        <button id="send" class="btn" type="button">Enviar</button>
-                    </span>
-                </div>
-            </div>
-            <div id="divLetTalk" class="col-md-4 col-lg-4 text-center">
-                <button type="button" class="btn btn-outline-secondary">Permitir</button>
-                <button id="presentation" type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#srcPresentation">Presentación</button>
-            </div>
+        <div id="divTools">
         </div>
         <!-- The Modal -->
         <div class="modal fade" id="srcPresentation">
@@ -93,12 +81,13 @@
         </div>
 
     </div>
+    <div id="audiosDiv">
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-
     <script src="/src/build/roomsFinal.js"></script>
 
 

@@ -5,12 +5,19 @@ export default class Presentation extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {presentation: ""}
+
 	}
 
 	componentDidMount() {
+		$('#sendPresentation').click(() => {
+			let url = $('#urlPresentation').val();
+			this.props.con.emit('sendingPresentation', {key: $('#room').val(), val: url});
+		});
 		this.props.con.on('newPresentation', (urlPresentation) => {
-            console.log(urlPresentation);
-			this.setState({ presentation: urlPresentation });
+            let checkUrl = urlPresentation.indexOf("https://docs.google.com/");
+			if (checkUrl != -1) {
+				this.setState({ presentation: urlPresentation });
+			}
 		});
 	}
 	render() {

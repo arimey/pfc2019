@@ -14,7 +14,7 @@ var userSchema = new mongoose.Schema({
 	},
 	password: String,
 	passwordConf: String,
-	userType: Number,
+	userType: String,
 	subjects: [{ type: mongoose.Schema.ObjectId, ref: "Subject" }]
 });
 

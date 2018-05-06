@@ -1,5 +1,5 @@
 .scrollable {
-    overflow: scroll hidden;
+    overflow: auto;
     padding: 0px;
     margin: 0px;
     height: 300px;
@@ -23,6 +23,23 @@
     text-align: center;
 }
 
+.noMarginRow {
+    padding:0px;
+    width: 100%;
+    height: 100%;
+    vertical-align: middle;
+    text-align: center;
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+.row {
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+
+
 #chatBox1 {
     padding: 0px;
     margin: 0px;
@@ -38,10 +55,12 @@
     margin: 0px;
 }
 
-#divLetTalk {
+#divTools {
     padding: 0px;
     margin: 0px;
-    border: 1px solid #F5F5F5;
+    /*margin-left: 15px;
+    margin-right: 15px;
+    border: 1px solid #F5F5F5;*/
 }
 
 #exitButton {
@@ -53,10 +72,16 @@
     cursor:pointer;
 }
 
-#videoCapture {
+#videoCaptureDiv {
     padding: 0px;
     margin: 0px;
     border: 1px solid #F5F5F5;
+}
+
+#mediasoupVideo {
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
 }
 
 #board {
