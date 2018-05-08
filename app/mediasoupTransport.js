@@ -34,6 +34,7 @@ class mediasoupTransport extends EventEmitter {
 
     //Update a peer state for transport the produces and update view
     changePeerState(name, state, socketList) {
+        console.log("Peer " + name + " with state " + state);
         this._activePeers.set(name, state);
         let socketClientId;
         socketList.forEach((value, key) => {
@@ -61,6 +62,12 @@ class mediasoupTransport extends EventEmitter {
         var peer = this._peers.get(name);
         this._peers.delete(name);
         this._activePeers.delete(name);
+        this._socketPeers.forEach((val, key) => {
+            if (val === name) {
+                console.log(name);
+                this._socketPeers.delete(key);
+            }
+        });
         this.sendActualUsersConected();
         if (this._mediaRoom.getPeerByName(name)) {
             this._mediaRoom.getPeerByName(name).close();

@@ -22,7 +22,7 @@ export default class Presentation extends React.Component {
 	}
 	render() {
 		var item = this.state.presentation;
-
+		item = item;
 		return (
             <div className="noMargin">
                 {item == "" ?

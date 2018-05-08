@@ -55,7 +55,7 @@ class mediasoup {
                     }
                     else {
                         this.sendMyStream(this.videoProducer, this.sendTransport);
-                        this.videoProducer = true;
+                        this.videoSent = true;
                     }
                 }
             }
@@ -78,6 +78,11 @@ class mediasoup {
                 if (this.mediaDevices.audio === true) {
                     if (this.audioSent) {
                         this.audioProducer.pause();
+                    }
+                }
+                if (this.mediaDevices.video === true) {
+                    if (this.videoSent) {
+                        this.videoProducer.pause();
                     }
                 }
             }
@@ -228,15 +233,28 @@ class mediasoup {
         }
 
         handleConsumer(consumer) {
+            console.log("Emitiendo desde : " + consumer.peer.name);
             consumer.receive(this.recvTransport)
             .then((track) => {
-                console.log(track);
-                let video = document.querySelector('#mediasoupVideo');
-                //let audio = new Audio();
-                let stream = new MediaStream();
-                stream.addTrack(track);
-                video.src = window.URL.createObjectURL(stream);
-                video.play();
+                if (track.kind === 'audio') {
+                    var audio = document.createElement('audio');
+                    console.log(track);
+                    //let video = document.querySelector('#mediasoupVideo');
+                    //let audio = new Audio();
+                    let stream = new MediaStream();
+                    stream.addTrack(track);
+                    audio.src = window.URL.createObjectURL(stream);
+                    audio.play();
+                    $("#videoCaptureDiv").append(audio);
+                }
+                if (track.kind === 'video') {
+                    var video = document.getElementById('mediasoupVideo');
+                    console.log(track);
+                    let stream = new MediaStream();
+                    stream.addTrack(track);
+                    video.src = window.URL.createObjectURL(stream);
+                    video.play();
+                }
             })
             .catch((error) => {
                 console.log(error);

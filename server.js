@@ -124,7 +124,7 @@ io.on('connection', function(client) {
 
 	client.on("peerLeaving", (peerName) => {
 		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
-		console.log("Cerrando peer 1");
+		console.log("Cerrando peer 111");
 		roomLocal.closePeer(peerName);
 	});
 
@@ -158,6 +158,9 @@ io.on('connection', function(client) {
 	});
 
 	client.on("disconnect", () => {
+		let peer = socketPeer.get(client.id);
+		socketPeer.delete(client.id);
+		peerSocket.delete(peer);
 		/*let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
 		var nombre = socketPeer.get(client.id);
 		if (typeof nombre !== "undefined") {
