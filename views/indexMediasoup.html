@@ -58,13 +58,21 @@
 
                         <!-- Modal Header -->
                         <div class="modal-header">
-                            <h4 class="modal-title">Añadir dirección presentación</h4>
+                            <h4 class="modal-title">Añadir presentación en pdf</h4>
                         </div>
 
                         <!-- Modal body -->
                         <div class="modal-body">
                             <div class="input-group">
-                                <input id="urlPresentation" type="text" placeholder="Enlace de google slides...">
+                                <div class="custom-file" id="customFile" lang="es">
+                                    <input type="file" class="custom-file-input" id="inputFile" aria-describedby="fileHelp">
+                                    <label class="custom-file-label" for="inputFile">
+                                        Seleciona archivo...
+                                    </label>
+                                </div>
+                                    <!--<input type="file" class="custom-file-input" id="file-input" />
+                                    <label for="file-input" class="custom-file-label">Escoge archivo...</label>
+                                </div>-->
                                 <span class="input-group-btn">
                                     <button id="sendPresentation" class="btn btn-secondary" type="button">Enviar</button>
                                 </span>
@@ -88,6 +96,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script src="/src/pdf.js"></script>
     <script src="/src/build/roomsFinal.js"></script>
 
 
