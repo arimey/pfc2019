@@ -4,7 +4,7 @@ import * as mediasoupClient from 'mediasoup-client';
 //import React from 'react';
 //import ReactDOM from 'react-dom';
 
-class mediasoup {
+class MediasoupController {
     constructor(socket, idRoom) {
         this.transportSocket = socket;
         this.userType = $("#userType").val();
@@ -270,4 +270,4 @@ class mediasoup {
         }
 }
 
-module.exports = mediasoup;
+module.exports = MediasoupController;

@@ -5,7 +5,7 @@ import PdfController from './../PresentationController.js';
 export default class Presentation extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {presentation: ""}
+		this.state = {presentation: "", num: 0}
 		this.renderPdf = this.renderPdf.bind(this);
 		this.prevPage = this.prevPage.bind(this);
 		this.nextPage = this.nextPage.bind(this);
@@ -14,6 +14,10 @@ export default class Presentation extends React.Component {
 		this.pdfController;
 		this.pageNum = 1;
 		this.pageRendering = false;
+		this.userType = $('#userType').val();
+		this.actualPage = 1;
+		this.pagesCanvas = [];
+		this.pdf = null;
 	}
 
 	componentDidMount() {
@@ -23,16 +27,20 @@ export default class Presentation extends React.Component {
 
 		});
 		inputFile.addEventListener('change', (file) => {
+			this.pageNum = 1;
+			this.pagesCanvas = [];
+			this.setState({presentation: "", num: 0});
 			let fileName = $('#inputFile').val().split('\\').pop();
 			$('#inputFile').next('.custom-file-label').addClass("selected").html(fileName);
 			this.pdfController = new PdfController(fileName, file.target.files[0]);
 			this.pdfController.readFile()
 				.then((content) => {
 					var binaryPdf = this.pdfController.convertToBinary(content);
+					this.props.con.emit('newPdf', {data: content, num: 1});
 					return this.pdfController.getDocument(binaryPdf);
 				})
 				.then((pdf) => {
-					this.setState({ presentation: pdf });
+					this.setState({ presentation: pdf, num: this.actualPage});
 					return this.pdfController.getPage(pdf, 1);
 				})
 				.then((page) => {
@@ -43,19 +51,44 @@ export default class Presentation extends React.Component {
 				console.log(error);
 			});
 		})
+
 		$('.custom-file-input').on('change', (val) => {
 
-		});
-		this.props.con.on('newPresentation', (urlPresentation) => {
-            let checkUrl = urlPresentation.indexOf("https://docs.google.com/");
-			if (checkUrl != -1) {
-				this.setState({ presentation: urlPresentation });
+		})
+
+		this.props.con.on('newPdf', (data) => {
+			if (this.userType != "Profesor") {
+				this.setState({presentation: "", num: 0});
+				this.actualPage = data.num;
+				this.convertToPdf(data.data);
 			}
 		});
+
+		this.props.con.on('updatePage', (data) => {
+			if (this.userType != "Profesor") {
+				this.setState({presentation: this.state.presentation, num: data});
+			}
+		});
+
 	}
 
-	getPage(num) {
-		this.pdfController.getPage(this.state.presentation, num)
+	componentDidUpdate(prevProps, prevState) {
+		if (this.state.num > 0) {
+			if ($('#pdfDiv').has("canvas").length) {
+				$('canvas').remove();
+			}
+			$('#pdfDiv').prepend(this.pagesCanvas[this.state.num - 1]);
+		}
+	}
+
+	convertToPdf(data) {
+		this.pdfController = new PdfController();
+		var binaryPdf = this.pdfController.convertToBinary(data);
+		this.pdfController.getDocument(binaryPdf)
+			.then((pdf) => {
+				this.setState({ presentation: pdf, num: 0});
+				return this.pdfController.getPage(pdf, 1);
+			})
 			.then((page) => {
 				this.renderPdf(page);
 			})
@@ -64,23 +97,49 @@ export default class Presentation extends React.Component {
 			});
 	}
 
+
+	getPage(num) {
+		this.pdfController.getPage(this.state.presentation, num)
+			.then((page) => {
+				return page;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	}
+
 	renderPdf(page) {
-		this.pageRendering = true;
-		let canvas = document.getElementById('pdfCanvas');
+		let canvas = document.createElement('canvas');
 		let context = canvas.getContext('2d');
-		let viewport = page.getViewport(this.props.width / page.getViewport(1.0).width);
+		let viewport = page.getViewport(5);
+		canvas.width = viewport.width;
+		canvas.height = viewport.height;
+		canvas.style.width = '100%';
+		canvas.style.height = this.userType === "Profesor" ? '88%' : '100%';
+
+
 		let renderContext = {
 				canvasContext: context,
 				viewport: viewport
 		};
-
 		page.render(renderContext)
 			.then(() => {
-				this.pageRendering = false;
-				console.log('Page rendered');
+				if (this.pageNum < this.state.presentation.numPages) {
+					console.log(canvas);
+					this.pagesCanvas[this.pageNum - 1] = canvas;
+					this.pageNum++;
+					this.state.presentation.getPage(this.pageNum).then(this.renderPdf);
+				}
+				else {
+					this.pagesCanvas[this.pageNum - 1] = canvas;
+					this.setState({presentation: this.state.presentation, num: this.actualPage});
+					$('#pageNum').text(1);
+				}
+
+
 			}
 		);
-		$('#pageNum').text(this.pageNum);
+
 	}
 
 	queueRenderPage(num) {
@@ -88,22 +147,25 @@ export default class Presentation extends React.Component {
 	}
 
 	nextPage() {
-		if (pageNum >= this.state.presentation.numPages)
+		if (this.state.num >= this.state.presentation.numPages)
 			return;
-		this.pageNum++;
-		this.queueRenderPage(this.pageNum);
+		let page = this.state.num + 1;
+		this.props.con.emit('currentPage', page);
+		this.setState({presentation: this.state.presentation, num: page});
 	}
 
 	prevPage() {
-		if (pageNum <= 1)
+		if (this.state.num <= 1)
 			return;
-		this.pageNum--;
-		this.queueRenderPage(this.pageNum);
+		let page = this.state.num - 1;
+		this.props.con.emit('currentPage', page);
+		this.setState({presentation: this.state.presentation, num: page});
 	}
+
 
 	render() {
 		var item = this.state.presentation;
-		item = item;
+		var user = this.userType;
 		return (
             <div className="noMargin">
 
@@ -112,21 +174,26 @@ export default class Presentation extends React.Component {
                         No ha cargado ninguna presentación.
                     </div>
                 :
-					<div className="noMargin">
-						<canvas id="pdfCanvas" width={this.props.width} height={this.props.height - 50}></canvas>
-						<a href="javascript:" onClick={this.prevPage} className="badge badge-dark">&lt;</a>
-	
-						<span className="badge badge-light">
-							Page:
-							<span className="badge badge-light" id="pageNum">
-							</span>
-							/
-							<span className="badge badge-light" id="pageCount">
+					user == "Profesor" ?
+						<div id="pdfDiv" className="noMargin">
+							<a href="javascript:" onClick={this.prevPage} className="badge badge-dark">&lt;</a>
+							<span className="badge badge-light">
+								Page:
+								<span className="badge badge-light" id="pageNum">
+								{this.state.num}
+								</span>
+								/
+								<span className="badge badge-light" id="pageCount">
 								{this.state.presentation.numPages}
+								</span>
 							</span>
-						</span>
-						<a href="javascript:" onClick={this.nextPage} className="badge badge-dark">&gt;</a>
-					</div>
+							<a href="javascript:" onClick={this.nextPage} className="badge badge-dark">&gt;</a>
+						</div>
+						:
+						<div id="pdfDiv" className="noMargin">
+						</div>
+
+
                     /*<iframe src={item} width={this.props.width} height={this.props.height} frameBorder="0" allowFullScreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>*/
                 }
             </div>

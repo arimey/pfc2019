@@ -48,16 +48,26 @@ app.use(flash());
 
 app.use('/src', express.static(__dirname + '/src'));
 
+var dbController = require('./app/DatabaseController.js');
+var dbControllerOb;
+
+
 var mediasoupRooms = require("./app/mediasoupTransport.js");
 var mediasoupRoomsMap = new Map();
 var idRoomSocket = new Map();
 var socketPeer = new Map();
 var peerSocket = new Map();
 var presentationUrls = new Map();
+var roomPdf = new Map();
 
 
 io.on('connection', function(client) {
 	console.log('Client ' + client.id + ' connected to socket.');
+
+	client.on('adminConecting', () => {
+		dbControllerOb = new dbController(io, client, client.id);
+	});
+
 	//Start mediasoup class, server and room.... for each room open
 	client.on('startMediasoup', function(roomId) {
 		console.log(roomId);
@@ -68,6 +78,7 @@ io.on('connection', function(client) {
 				mediasoupRoomsMap.set(roomId, room);
 				client.join(roomId);
 				console.log('Creating room mediasoup server');
+
 			}
 			catch (error) {
 				console.log(error);
@@ -80,9 +91,9 @@ io.on('connection', function(client) {
 			}
 			//room = mediasoupRoomsMap.get(roomId);
 		}
-		if (presentationUrls.has(roomId)) {
-			let presentationUrl = presentationUrls.get(roomId);
-			io.sockets.in(roomId).emit('newPresentation', presentationUrl);
+		if (roomPdf.has(roomId)) {
+			let pdf = roomPdf.get(roomId);
+			io.sockets.in(roomId).emit('newPdf', pdf);
 		}
 	});
 
@@ -155,6 +166,19 @@ io.on('connection', function(client) {
 	client.on("closeAllPeers", (data) => {
 		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
 		roomLocal.closeAllProducers(data, peerSocket);
+	});
+
+	client.on("newPdf", (data) => {
+		let roomId = idRoomSocket.get(client.id);
+		roomPdf.set(roomId, data);
+		io.sockets.in(roomId).emit("newPdf", data);
+	});
+
+	client.on("currentPage", (numPage) => {
+		let roomId = idRoomSocket.get(client.id);
+		let pdf = roomPdf.get(roomId);
+		roomPdf.set(roomId, {data: pdf.data, num: numPage});
+		io.sockets.in(roomId).emit("updatePage", numPage);
 	});
 
 	client.on("disconnect", () => {

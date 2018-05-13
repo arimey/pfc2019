@@ -45,4 +45,12 @@ gulp.task('build4', function() {
 		.pipe(gulp.dest('./src/build'))
 });
 
-gulp.task('default', ['build3', 'build4']);
+gulp.task('build5', function() {
+	return browserify({ entries: './src/adminRoomController', extensions: ['.js'], debug: true})
+		.transform('babelify', { presets: ['es2015', 'react'] })
+		.bundle()
+		.pipe(source('adminFinal.js'))
+		.pipe(gulp.dest('./src/build'))
+});
+
+gulp.task('default', ['build3', 'build4', 'build5']);

@@ -32,11 +32,18 @@ module.exports = function(app, passport) {
 		var Subject = require('./models/subjects');
 		User.find({ username: req.user.username }, (err, user) => {
 			if (err) throw err;
-			Subject.populate(user, {path: "subjects"}, (err, user) => {
-				userJSON = user;
-				console.log(user[0].subjects);
-				res.render('indexRooms.html', {user: userJSON[0].username, userJSON: JSON.stringify(userJSON[0].subjects), permission: JSON.stringify(userJSON[0].userType)});
-			});
+
+			if (user[0].userType === "Admin") {
+				console.log(user);
+				res.render('adminRoom.html', {user: user[0].username});
+			}
+			else {
+				Subject.populate(user, {path: "subjects"}, (err, user) => {
+					userJSON = user;
+					console.log(user[0].subjects);
+					res.render('indexRooms.html', {user: userJSON[0].username, userJSON: JSON.stringify(userJSON[0].subjects), permission: JSON.stringify(userJSON[0].userType)});
+				});
+			}
 		});
 	});
 
@@ -76,11 +83,11 @@ module.exports = function(app, passport) {
 	})
 
 
-	app.use(function(req, res, next) {
+	/*app.use(function(req, res, next) {
 		var err = new Error('File Not Found');
 		err.status = 404;
 		next(err);
-	});
+	});*/
 
 }
 

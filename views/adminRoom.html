@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Campus Virtual</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/src/css/styleViewMediasoup.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar justify-content-between">
+            <a class="navbar-brand">Panel Administrador</a>
+            <form id="formExit" class="form-inline" action="/logout" method="get">
+                <h3>Bienvenid@ <strong><%= user %></strong> &nbsp;&nbsp;</h3>
+
+                <input type="image" id="exitButton" src="/src/imgs/exit.png" border="0" alt="submit" />
+            </form>
+        </nav>
+        </div>
+            <div id="root" class="container">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script src="/src/build/adminFinal.js"></script>
+
+
+
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 var EventEmitter = require('events').EventEmitter;
 var config = require('./../config/mediaCodecs.js');
 
-class mediasoupTransport extends EventEmitter {
+class MediasoupTransport extends EventEmitter {
     constructor(id, mediasoupServer, socketTransport) {
         super();
 
@@ -240,4 +240,4 @@ class mediasoupTransport extends EventEmitter {
 
 }
 
-module.exports = mediasoupTransport;
+module.exports = MediasoupTransport;
