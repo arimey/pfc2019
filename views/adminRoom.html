@@ -8,25 +8,36 @@
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/src/css/styleViewMediasoup.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 
 </head>
 <body>
-    <div class="container">
-        <nav class="navbar justify-content-between">
+
+    <nav class="navbar justify-content-between">
+        <div class="container">
             <a class="navbar-brand">Panel Administrador</a>
             <form id="formExit" class="form-inline" action="/logout" method="get">
                 <h3>Bienvenid@ <strong><%= user %></strong> &nbsp;&nbsp;</h3>
 
                 <input type="image" id="exitButton" src="/src/imgs/exit.png" border="0" alt="submit" />
             </form>
-        </nav>
         </div>
-            <div id="root" class="container">
+    </nav>
 
-            </div>
+    <div class="container">
+        <div id="root" class="hiddenScroll">
+
         </div>
+
     </div>
+            <!---<div class="container">
+                <div class="row">
+                    <div class="col align-self-center">
+                        <button type="button" class="btn btn-outline-dark">Crear</button>
+                    </div>
+                </div>
+            </div>-->
+    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

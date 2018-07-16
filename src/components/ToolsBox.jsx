@@ -50,8 +50,7 @@ export default class ToolsBox extends React.Component {
                 </div>
                 {userPermission == "Profesor" ?
                     <div className="col-md-4 col-lg-4 text-center">
-                        <button id="turnOnAll" type="button" className="btn btn-outline-secondary">Abrir</button>
-                        <button id="turnOffAll" type="button" className="btn btn-outline-secondary">Cerrar</button>
+
                         <button id="presentation" type="button" className="btn btn-outline-secondary" data-toggle="modal" data-target="#srcPresentation">Presentación</button>
                     </div>
                     :

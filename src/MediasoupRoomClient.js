@@ -13,15 +13,17 @@ class MediasoupController {
         this.consumers = new Map();
         this.peers = new Map();
         this.audioProducer = null;
-        this.videoPRoducer = null;
+        this.videoProducer = null;
         this.audioSent = false;
         this.mediaDevices = {audio: false, video: false};
         this.room = new mediasoupClient.Room(
-            {
-                requestTimeout : 12000
-            });
+                        {
+                            requestTimeout : 12000
+                        }
+                    );
 
-
+        //Enviamos mensaje de petición request al servidor
+        //Recibimos una respuesta y se la enviamos al cliente de Mediasoup
         this.room.on("request", (request, callback, errback) => {
             this.transportSocket.emit("mediasoupRoomRequest", { peer: this.name, body: request }, (response) => {
                 callback(response);
@@ -63,7 +65,6 @@ class MediasoupController {
             }
             else {
                 if (this.mediaDevices.audio === true) {
-                    //this.audioProducer.resume();
                     if (this.audioSent) {
                         this.audioProducer.resume();
                     }
@@ -105,9 +106,50 @@ class MediasoupController {
 
     }
 
-    //Join to the room Server
-    //Get devices to stream
-    //Create producers
+    //Verifica los dispositivos del usuario según el tipo
+    /*checkProducer(state) {
+        if (this.userType === "Profesor") {
+            if (this.mediaDevices.audio === true) {
+                if (this.audioSent) {
+                    if (state === "Activated") {
+                        this.audioProducer.resume();
+                    }
+                    else if (state === "Desactivated") {
+                        this.audioProducer.pause();
+                    }
+                }
+                else {
+                    if (state === "Activated") {
+                        this.sendMyStream(this.audioProducer, this.sendTransport);
+                        this.audioSent = true;
+                    }
+                }
+            }
+            else if (this.mediaDevices.video === true) {
+                if (this.videoSent) {
+                    if (state === "Activated") {
+                        this.videoProducer.resume();
+                    }
+                    else if (state === "Desactivated") {
+                        this.videoProducer.pause();
+                    }
+                }
+                else {
+                    this.sendMyStream(this.videoProducer, this.sendTransport);
+                    this.videoSent = true;
+                }
+            }
+        }
+        else {
+
+        }
+    }*/
+
+
+
+    //Ingresar a la room de Mediasoup
+    //Checkear y permitir dispositivos
+    //Crear producers
     join() {
         this.name = $("#userName").val();
         this.room.join(this.name)
@@ -123,7 +165,6 @@ class MediasoupController {
                 this.sendTransport.on("connectionstatechange", (connectionstate) => {
                     console.log("SendState: " + connectionstate);
                     if (connectionstate == "connected") {
-                    //    this.audioProducer.resume();
                     }
                 });
                 this.recvTransport.on("stats", (stats) => {
@@ -134,15 +175,9 @@ class MediasoupController {
                 });
                 this.recvTransport.on("connectionstatechange", (connectionstate) => {
                     console.log("RecvState: " + connectionstate);
-                    if (connectionstate == "connected") {
-                        //this.audioProducer.resume();
-                    }
                 });
 
                 for (var peer of peers) {
-                    //console.log("PEER");
-                    //console.log(peer);
-
                     this.handlePeer(peer);
                 }
             })
@@ -168,31 +203,24 @@ class MediasoupController {
                 if (this.mediaDevices.audio == true) {
                     var audioTrack = stream.getAudioTracks()[0];
                     this.audioProducer = this.room.createProducer(audioTrack);
-                    //this.sendMyStream(this.audioProducer, this.sendTransport);
-                    //this.audioProducer.pause();
+
                 }
 
                 if (this.mediaDevices.video == true) {
                     var videoTrack = stream.getVideoTracks()[0];
                     this.videoProducer = this.room.createProducer(videoTrack);
-                    //this.sendMyStream(this.videoProducer, this.sendTransport);
-                    //this.videoProducer.pause();
+
                 }
             });
         }
 
+        //Enviar el stream con la ayuda de las entidades Producer y Transport
         sendMyStream(producer, transport) {
-            producer.on("trackended", () => {
-                console.log("Termino el track");
-            });
-            producer.on("handled", () => {
-                console.log("transport given to this producer");
-            });
-            producer.on("stats", (stats) => {
-                console.log(stats);
-            });
-            if (!this.room.canSend('audio')) {
+            if (!this.room.canSend('audio') && producer.kind === "audio") {
                 console.log("CANT SEND AUDIO");
+            }
+            else if (!this.room.canSend('video') && producer.kind == "video") {
+                console.log("CANT SEND VIDEO");
             }
             else {
                 producer.send(transport)
@@ -203,7 +231,6 @@ class MediasoupController {
                         console.log(e);
                     })
             }
-
         }
 
         quit() {
@@ -218,14 +245,10 @@ class MediasoupController {
 
         handlePeer(peer) {
             for (var consumer of peer.consumers) {
-                console.log("CONSuMER LIST1");
-                console.log(consumer.peer.name);
                 this.handleConsumer(consumer);
             }
             //if (peer.name != this.name) {
             peer.on("newconsumer", (consumer) => {
-                console.log("CONSuMER EVENT2");
-                console.log(consumer.peer.name);
                 this.handleConsumer(consumer);
             });
             //}
@@ -235,14 +258,10 @@ class MediasoupController {
         }
 
         handleConsumer(consumer) {
-            console.log("Emitiendo desde : " + consumer.peer.name);
             consumer.receive(this.recvTransport)
             .then((track) => {
                 if (track.kind === 'audio') {
                     var audio = document.createElement('audio');
-                    console.log(track);
-                    //let video = document.querySelector('#mediasoupVideo');
-                    //let audio = new Audio();
                     let stream = new MediaStream();
                     stream.addTrack(track);
                     audio.src = window.URL.createObjectURL(stream);

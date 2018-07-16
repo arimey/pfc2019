@@ -168,7 +168,6 @@ export default class Presentation extends React.Component {
 		var user = this.userType;
 		return (
             <div className="noMargin">
-
                 {item == "" ?
                     <div className="alert alert-info align-middle" display="inline-block" role="alert">
                         No ha cargado ninguna presentación.
@@ -192,9 +191,6 @@ export default class Presentation extends React.Component {
 						:
 						<div id="pdfDiv" className="noMargin">
 						</div>
-
-
-                    /*<iframe src={item} width={this.props.width} height={this.props.height} frameBorder="0" allowFullScreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>*/
                 }
             </div>
 		)

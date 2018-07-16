@@ -10,7 +10,7 @@ var mediasoupApp = require("./MediasoupRoomClient.js");
 var mediasoupObj;
 
 $(document).ready(() => {
-	
+
 	let w = $('#videoCaptureDiv').width();
 	let h = w/1.4;
 	var socket = io();

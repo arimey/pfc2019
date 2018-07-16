@@ -3,7 +3,7 @@
 var EventEmitter = require('events').EventEmitter;
 var config = require('./../config/mediaCodecs.js');
 
-class MediasoupTransport extends EventEmitter {
+class MediasoupRoomTransport extends EventEmitter {
     constructor(id, mediasoupServer, socketTransport) {
         super();
 
@@ -13,6 +13,7 @@ class MediasoupTransport extends EventEmitter {
         this._activePeers = new Map();
         this._socketPeers = new Map();
 
+        //Se intenta crear una Room en el servidor con la configuración de los codecs
         try {
             this._mediaRoom = mediasoupServer.Room(config);
         }
@@ -99,16 +100,14 @@ class MediasoupTransport extends EventEmitter {
             console.log("Peer cerrado por " + originator);
             this.closePeer(peer.name);
         });
-
     }
 
-    //Manage mediasoup request to roomserver (queryroom and join)
+    //Maneja mensajes de petición hacia el servidor de Mediasoup
     manageMediasoupRoomRequest(request, callback) {
         switch (request.method) {
             case "queryRoom" : {
                 this._mediaRoom.receiveRequest(request)
                 .then((response) => {
-                    //console.log(response);
                     callback(response);
                 })
                 .catch((error) => console.log(error.toString()));
@@ -163,8 +162,10 @@ class MediasoupTransport extends EventEmitter {
             case "createTransport" : {
                 //console.log("Creando transport servidor");
                 //console.log("Id del peer: %s", request.peer);
+                console.log(request.body.options);
                 this._mediaRoom.getPeerByName(request.peer).receiveRequest(request.body)
                 .then((response) => {
+                    console.log("TRANSPORTE");
                     console.log(response);
                     callback(response);
                 });
@@ -240,4 +241,4 @@ class MediasoupTransport extends EventEmitter {
 
 }
 
-module.exports = MediasoupTransport;
+module.exports = MediasoupRoomTransport;

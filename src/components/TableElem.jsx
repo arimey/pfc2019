@@ -30,16 +30,18 @@ export default class Actives extends React.Component {
     				(<tr className="table-success">
     					<td>
                             {this.props.name}
-                            <a href="javascript:" onClick={this.desactivateUser} className="badge badge-danger float-right">X</a>
-                            <a href="javascript:" onClick={this.activateUser} className="badge badge-success float-right">V</a>
+
+							<span className="fas fa-microphone-slash fa-lg float-right pointer-span" onClick={this.desactivateUser}></span>
+							<span className="fas fa-microphone fa-lg float-right pointer-span" onClick={this.activateUser}></span>
     					</td>
     				</tr>)
     			:
     				(<tr>
     					<td>
     						{this.props.name}
-    						<a href="javascript:" onClick={this.desactivateUser} className="badge badge-danger float-right">X</a>
-    						<a href="javascript:" onClick={this.activateUser} className="badge badge-success float-right">V</a>
+
+							<span className="fas fa-microphone-slash fa-lg float-right pointer-span" onClick={this.desactivateUser}></span>
+							<span className="fas fa-microphone fa-lg float-right pointer-span" onClick={this.activateUser}></span>
     					</td>
     				</tr>)
     		)

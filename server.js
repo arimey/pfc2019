@@ -68,7 +68,9 @@ io.on('connection', function(client) {
 		dbControllerOb = new dbController(io, client, client.id);
 	});
 
-	//Start mediasoup class, server and room.... for each room open
+	//Se recibe este mensaje cada vez que un cliente entra en una sala
+	//Se busca la Room por si ya ha sido creada anteriormente
+	//De ser así, incluye al nuevo usuario, sino, crea una nueva Room con el id de la sala
 	client.on('startMediasoup', function(roomId) {
 		console.log(roomId);
 		if (!mediasoupRoomsMap.has(roomId)) {
@@ -89,7 +91,6 @@ io.on('connection', function(client) {
 				client.join(roomId);
 				idRoomSocket.set(client.id, roomId);
 			}
-			//room = mediasoupRoomsMap.get(roomId);
 		}
 		if (roomPdf.has(roomId)) {
 			let pdf = roomPdf.get(roomId);
