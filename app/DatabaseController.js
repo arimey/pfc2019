@@ -1,12 +1,12 @@
 'use strict';
 var User = require('./models/users');
-var Subjects = require('./models/subjects');
+var Subject = require('./models/subjects.js');
 
 class DatabaseController {
     constructor(io, socketClient, adminId) {
         console.log("CREADO");
         this.userModel = User;
-        this.subjectsModel = Subjects;
+        this.subjectsModel = Subject;
         this.connection = io;
         this.adminId = adminId;
         this.socket = socketClient;
@@ -24,6 +24,7 @@ class DatabaseController {
         this.socket.on('updateUser', this.updateUser);
         this.socket.on('updateUserRooms', this.updateUserRooms);
         this.socket.on('createUser', this.addUser);
+        this.socket.on('addRoom', this.addSubject);
     }
 
     findAllUsers() {
@@ -84,6 +85,7 @@ class DatabaseController {
     }
 
     addSubject(req) {
+        console.log(this.subjectsModel);
         const newSubject = new this.subjectsModel(req);
         newSubject.save((err) => {
             if (err) return err;

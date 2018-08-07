@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ChangeUserModal from './ModalUpdateUser.jsx';
 import CreateUserModal from './ModalCreateUser.jsx';
-import AddRoomModal from './ModalUpdateUserRooms.jsx';
+import UpdateRoomsModal from './ModalUpdateUserRooms.jsx';
+import AddRoomModal from './ModalAddRoom.jsx';
 
 export default class AdminPanel extends React.Component {
     constructor(props) {
@@ -17,6 +18,7 @@ export default class AdminPanel extends React.Component {
         this.updateUserRooms = this.updateUserRooms.bind(this);
         this.createUser = this.createUser.bind(this);
         this.showUpdateRooms = this.showUpdateRooms.bind(this);
+        this.addRoom = this.addRoom.bind(this);
         this.state = {users: [], subjects: [], showModal: false};
     }
 
@@ -52,8 +54,11 @@ export default class AdminPanel extends React.Component {
     }
 
     updateUser(data) {
-
         this.socket.emit('updateUser', data);
+    }
+
+    addRoom(data) {
+        this.socket.emit('addRoom', data);
     }
 
     updateUserRooms(data) {
@@ -136,10 +141,14 @@ export default class AdminPanel extends React.Component {
                 <div className="text-center">
                     <button type="button" className="btn btn-outline-dark" data-toggle="modal" data-target="#createModal">Nuevo Usuario</button>
                 </div>
+                <div className="text-center">
+                    <button type="button" className="btn btn-outline-dark" data-toggle="modal" data-target="#addRoomModal">Nueva Sala</button>
+                </div>
 
                 <ChangeUserModal update={this.updateUser} />
                 <CreateUserModal create={this.createUser} />
-                <AddRoomModal updateUserRooms={this.updateUserRooms} subjects={this.state.subjects} />
+                <UpdateRoomsModal updateUserRooms={this.updateUserRooms} subjects={this.state.subjects} />
+                <AddRoomModal addRoom={this.addRoom} />
             </div>
         )
     }
