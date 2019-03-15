@@ -16,6 +16,7 @@ class DatabaseController {
         this.updateUser = this.updateUser.bind(this);
         this.updateUserRooms = this.updateUserRooms.bind(this);
         this.addUser = this.addUser.bind(this);
+        this.addSubject = this.addSubject.bind(this);
         this.socket.on('findUsers', this.findAllUsers);
         this.socket.on('findSubjects', this.findAllSubjects);
         this.socket.on('findUserByName', this.findUserByName);
@@ -43,6 +44,8 @@ class DatabaseController {
 
     findAllSubjects() {
         this.subjectsModel.find((err, elems) => {
+            console.log("Elementos de salas: ");
+            console.log(elems);
             this.connection.sockets.connected[this.adminId].emit('subjectList', elems);
         });
     }
@@ -71,7 +74,7 @@ class DatabaseController {
     }
 
     addUser(req) {
-        console.log(req);
+        console.log(this.userModel);
         const newUser = new this.userModel(req);
         newUser.save((err) => {
             if (err) {
@@ -85,11 +88,14 @@ class DatabaseController {
     }
 
     addSubject(req) {
-        console.log(this.subjectsModel);
-        const newSubject = new this.subjectsModel(req);
+        const newSubject = new this.subjectsModel(req);                     
         newSubject.save((err) => {
-            if (err) return err;
-        });
+            if (err) { 
+                return err;
+            } else {
+                this.findAllSubjects();
+            }
+        });    
     }
 
     updateUser(data) {

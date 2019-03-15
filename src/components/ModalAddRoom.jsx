@@ -13,8 +13,9 @@ export default class ModalAddRoom extends React.Component {
             name: $('#roomName').val(),
             space: 50,
             state: "Offline"
-        }
+        }        
         this.props.addRoom(data);
+        $('#addRoomModal').modal('toggle');
     }
 
     render() {
@@ -23,7 +24,7 @@ export default class ModalAddRoom extends React.Component {
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-tittle">Crear usuario</h5>
+                            <h5 className="modal-tittle">Crear sala</h5>
                         </div>
                         <div className="modal-body">
                             <div className="input-group input-group-sm mb-3">

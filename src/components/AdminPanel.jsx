@@ -40,9 +40,8 @@ export default class AdminPanel extends React.Component {
 
     }
 
-    updateViewSubjectsList(data) {
+    updateViewSubjectsList(data) {        
         this.setState({users: this.state.users, subjects: data});
-
     }
 
     deleteUser(e, item) {
@@ -75,7 +74,7 @@ export default class AdminPanel extends React.Component {
         $('#inputMail').val(userData.email);
     }
 
-    showUpdateRooms(userData) {
+    showUpdateRooms(userData) {        
         $('#userIdForRoom').val(userData._id);
     }
 

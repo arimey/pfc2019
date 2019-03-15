@@ -17,6 +17,7 @@ export default class ModalUpdateUser extends React.Component {
             userType: $('#typeUser1 option:selected').text(),
         }
         this.props.create(data);
+        $('#createModal').modal('toggle');
     }
 
     render() {

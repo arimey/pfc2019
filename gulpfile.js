@@ -29,7 +29,7 @@ var minify = require('gulp-minify');
 		.pipe(gulp.dest('./src'))
 	})*/
 
-gulp.task('build3', function() {
+/*gulp.task('build3', function() {
 	return browserify({ entries: './src/indexFinalRoom', extensions: ['.js'], debug: true})
 		.transform('babelify', { presets: ['es2015', 'react'] })
 		.bundle()
@@ -43,7 +43,7 @@ gulp.task('build4', function() {
 		.bundle()
 		.pipe(source('roomsFinal2.js'))
 		.pipe(gulp.dest('./src/build'))
-});
+});*/
 
 gulp.task('build5', function() {
 	return browserify({ entries: './src/adminRoomController', extensions: ['.js'], debug: true})
@@ -53,4 +53,5 @@ gulp.task('build5', function() {
 		.pipe(gulp.dest('./src/build'))
 });
 
-gulp.task('default', ['build3', 'build4', 'build5']);
+gulp.task('default', ['build5']);
+//gulp.task('default', ['build3', 'build4', 'build5']);
