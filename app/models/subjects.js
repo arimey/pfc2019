@@ -7,6 +7,7 @@ var subjectSchema = new mongoose.Schema({
 		unique: true
 	},
 	space: Number,
+	connections: {type: Number, default: 0},
 	state: String
 });
 

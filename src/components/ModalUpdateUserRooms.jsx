@@ -6,6 +6,7 @@ export default class ModalUpdateRooms extends React.Component {
     constructor(props) {
         super(props);
         this.parentMethod = this.parentMethod.bind(this);
+        this.updateCheckbox = this.updateCheckbox.bind(this);
     }
 
     parentMethod() {
@@ -22,7 +23,13 @@ export default class ModalUpdateRooms extends React.Component {
             idRooms: roomsArray
         }
         this.props.updateUserRooms(data);
+    }
 
+    updateCheckbox(subjects) {
+      $('#roomValues input').prop('checked', false);
+      subjects.map((subject, index) => {
+          $('#' + subject._id).prop('checked', true);
+      });
     }
 
     render() {
@@ -37,7 +44,7 @@ export default class ModalUpdateRooms extends React.Component {
                             {this.props.subjects.map((itemx, indexx) => {
                                 return(
                                     <div className="form-check" >
-                                        <input className="form-check-input" type="checkbox" value={itemx._id} id={itemx.name} />
+                                        <input className="form-check-input" type="checkbox" value={itemx._id} id={itemx._id} />
                                         <label className="form-check-label" for={indexx}>
                                             {itemx.name}
                                         </label>
@@ -45,6 +52,7 @@ export default class ModalUpdateRooms extends React.Component {
                                 )
                             })}
                             <input id="userIdForRoom" type="hidden" />
+                            <input id="subjectsForUser" type="hidden" />
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>

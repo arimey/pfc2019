@@ -11,9 +11,9 @@ export default class ModalAddRoom extends React.Component {
     parentMethod() {
         let data = {
             name: $('#roomName').val(),
-            space: 50,
+            space: $('#roomSize').val(),
             state: "Offline"
-        }        
+        }
         this.props.addRoom(data);
         $('#addRoomModal').modal('toggle');
     }
@@ -29,9 +29,15 @@ export default class ModalAddRoom extends React.Component {
                         <div className="modal-body">
                             <div className="input-group input-group-sm mb-3">
                                 <div className="input-group-prepend">
-                                    <span className="input-group-text" id="inputGroup-sizing-sm">Nombre Sala</span>
+                                    <span className="input-group-text" id="inputGroup-sizing-sm">Nombre</span>
                                 </div>
                                 <input type="text" id="roomName" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                            </div>
+                            <div className="input-group input-group-sm mb-3">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text" id="inputGroup-sizing-sm">Capacidad</span>
+                                </div>
+                                <input type="text" id="roomSize" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                             </div>
                         </div>
                         <div className="modal-footer">

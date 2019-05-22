@@ -15,7 +15,10 @@
 }
 
 
-
+.input-group-text {
+  min-width: 110px;
+  text-align: center;
+}
 
 
 .hiddenScroll {

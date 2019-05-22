@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-export default class ModalUpdateUser extends React.Component {
+export default class ModalUpdateSubject extends React.Component {
 
     constructor(props) {
         super(props);
@@ -10,46 +10,42 @@ export default class ModalUpdateUser extends React.Component {
 
     parentMethod() {
         let data = {
-            id: $('#inputId').val(),
-            username: $('#inputName').val(),
-            email: $('#inputMail').val(),
-            userType: $('#typeUser option:selected').text()
+            id: $('#inputIdSubject').val(),
+            name: $('#inputNameSubject').val(),
+            space: $('#inputSpaceSubject').val(),
+            connections: $('#inputConnectionsSubject').val()
         }
         this.props.update(data);
     }
 
     render() {
         return (
-            <div className="modal fade" id="updateModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal fade" id="updateSubjectModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-tittle">Modificar usuario</h5>
+                            <h5 className="modal-tittle">Modificar sala</h5>
                         </div>
                         <div className="modal-body">
                             <div className="input-group input-group-sm mb-3">
                                 <div className="input-group-prepend">
                                     <span className="input-group-text" id="inputGroup-sizing-sm">Nombre</span>
                                 </div>
-                                <input type="text" id="inputName" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                                <input type="text" id="inputNameSubject" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                             </div>
                             <div className="input-group input-group-sm mb-3">
                                 <div className="input-group-prepend">
-                                    <span className="input-group-text" id="inputGroup-sizing-sm">Correo</span>
+                                    <span className="input-group-text" id="inputGroup-sizing-sm">Límite</span>
                                 </div>
-                                <input type="text" id="inputMail" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
-                                <input id="inputId" type="hidden" />
+                                <input type="text" id="inputSpaceSubject" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                                <input id="inputIdSubject" type="hidden" />
                             </div>
                             <div className="input-group input-group-sm mb-3">
                                 <div className="input-group-prepend">
-                                    <span className="input-group-text" id="inputType">Tipo</span>
+                                    <span className="input-group-text" id="inputGroup-sizing-sm">Conexiones</span>
                                 </div>
-                                <select className="custom-select" id="typeUser">
-                                    <option defaultvalue>Escoge el tipo de usuario</option>
-                                    <option value="1">Alumno</option>
-                                    <option value="2">Profesor</option>
-                                    <option value="3">Admin</option>
-                                </select>
+                                <input type="text" id="inputConnectionsSubject" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                                <input id="inputIdSubject" type="hidden" />
                             </div>
                         </div>
                         <div className="modal-footer">

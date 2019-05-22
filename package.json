@@ -1,7 +1,6 @@
 {
-  "name": "test",
-  "version": "0.0.1",
-  "private": true,
+  "name": "PFC",
+  "version": "1.0.0",
   "engines": {
     "node": "8.9.4"
   },

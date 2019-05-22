@@ -17,6 +17,7 @@
 			<form class="form-inline" action="/logout" method="get">
 		  		<!--<input id="nickLabel" class="form-control mr-sm-2" type="search" placeholder="Introducir nombre..." aria-label="Search">
 		    	<button id="botonNick" class="btn btn-outline-info my-2 my-sm-0" type="button">Aceptar</button>-->
+          <input id="userName" type="hidden" value="<%= user %>" />
 		    	<input id="subjects" type="hidden" value="<%= userJSON %>" />
 		    	<input id="userType" type="hidden" value="<%= permission %>" />
 		    	<h3>Bienvenid@ <strong><%= user %></strong> &nbsp;&nbsp;</h3>

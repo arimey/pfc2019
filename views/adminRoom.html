@@ -17,9 +17,9 @@
         <div class="container">
             <a class="navbar-brand">Panel Administrador</a>
             <form id="formExit" class="form-inline" action="/logout" method="get">
-                <h3>Bienvenid@ <strong><%= user %></strong> &nbsp;&nbsp;</h3>
-
-                <input type="image" id="exitButton" src="/src/imgs/exit.png" border="0" alt="submit" />
+              <a href="/rooms"><img id="roomButton" src="/src/imgs/home.png"></a>              
+              <h3>Bienvenid@ <strong><%= user %></strong> &nbsp;&nbsp;</h3>
+              <input type="image" id="exitButton" src="/src/imgs/exit.png" border="0" alt="submit" />
             </form>
         </div>
     </nav>
@@ -37,7 +37,7 @@
                     </div>
                 </div>
             </div>-->
-    
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

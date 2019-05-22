@@ -32,7 +32,7 @@ module.exports = function(app, passport) {
 		var Subject = require('./models/subjects');
 		User.find({ username: req.user.username }, (err, user) => {
 			if (err) throw err;
-
+			console.log(user);
 			if (user[0].userType === "Admin") {
 				console.log(user);
 				res.render('adminRoom.html', {user: user[0].username});
@@ -61,7 +61,28 @@ module.exports = function(app, passport) {
 	});
 
 	app.get('/sala/:id', function(req, res) {
-		res.render('indexMediasoup.html', { user: req.user.username, room: req.params.id, permission: req.user.userType });
+		if (req.params.id === 'Panel Administración') {
+			console.log(req);
+			console.log(req.user);
+			res.render('adminRoom.html', {user: req.user.username});
+		} else {
+			console.log(req);
+			console.log(req.user);
+			updateRoomNumberConnections(req.params.id);
+				/*var Subject = require('./models/subjects');
+				Subject.find({name: req.params.id},)
+				Subject.findOneAndUpdate({name: req.params.id}, {
+						"$set": {
+								"state": 'Online',
+						}
+				}).exec((err, user) => {
+					if (err) {
+							console.log(err);
+							return;
+					}
+				});*/
+				res.render('indexMediasoup.html', { user: req.user.username, room: req.params.id, permission: req.user.userType });
+		}
 	});
 
 	app.get('/index', isLoggedIn, function(req, res) {
@@ -96,4 +117,23 @@ function isLoggedIn(req, res, next) {
 		return next();
 	}
 	res.redirect('/');
+}
+
+function updateRoomNumberConnections(roomName) {
+	var Subject = require('./models/subjects');
+	Subject.find({name: roomName}, (err, subjectItem) => {
+		if (err) throw err;
+		var connections = subjectItem[0].connections + 1;
+		Subject.findOneAndUpdate({name: roomName}, {
+				"$set": {
+						"connections": connections,
+				}
+		}).exec((err, user) => {
+			if (err) {
+					console.log(err);
+					return;
+			}
+		});
+	});
+
 }

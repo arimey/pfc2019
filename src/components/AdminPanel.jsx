@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ChangeUserModal from './ModalUpdateUser.jsx';
+import ChangeSubjectModal from './ModalUpdateSubject.jsx';
 import CreateUserModal from './ModalCreateUser.jsx';
 import UpdateRoomsModal from './ModalUpdateUserRooms.jsx';
 import AddRoomModal from './ModalAddRoom.jsx';
@@ -15,11 +16,15 @@ export default class AdminPanel extends React.Component {
         this.showServerMsg = this.showServerMsg.bind(this);
         this.showUpdatePanel = this.showUpdatePanel.bind(this);
         this.updateUser = this.updateUser.bind(this);
+        this.updateSubject = this.updateSubject.bind(this);
         this.updateUserRooms = this.updateUserRooms.bind(this);
         this.createUser = this.createUser.bind(this);
         this.showUpdateRooms = this.showUpdateRooms.bind(this);
+        this.showUpdateSubjectPanel = this.showUpdateSubjectPanel.bind(this);
         this.addRoom = this.addRoom.bind(this);
+        this.deleteSubject = this.deleteSubject.bind(this);
         this.state = {users: [], subjects: [], showModal: false};
+        this.triggerChildCheckboxUpdate = this.triggerChildCheckboxUpdate.bind(this);
     }
 
     componentDidMount() {
@@ -31,6 +36,7 @@ export default class AdminPanel extends React.Component {
         this.socket.on('subjectList', this.updateViewSubjectsList);
         this.socket.on('deleted', this.showServerMsg);
         this.socket.on('updatedUser', this.showServerMsg);
+        this.socket.on('updatedSubjects', this.showServerMsg);        
     }
 
 
@@ -40,7 +46,7 @@ export default class AdminPanel extends React.Component {
 
     }
 
-    updateViewSubjectsList(data) {        
+    updateViewSubjectsList(data) {
         this.setState({users: this.state.users, subjects: data});
     }
 
@@ -48,12 +54,22 @@ export default class AdminPanel extends React.Component {
         this.socket.emit('deleteUser', item._id);
     }
 
+    deleteSubject(e, item) {
+        this.socket.emit('deleteSubject', item._id);
+    }
+
     showServerMsg(msg) {
         this.socket.emit('findUsers');
+        this.socket.emit('findSubjects');
+        alert(msg);
     }
 
     updateUser(data) {
         this.socket.emit('updateUser', data);
+    }
+
+    updateSubject(data) {
+        this.socket.emit('updateSubject', data);
     }
 
     addRoom(data) {
@@ -74,15 +90,33 @@ export default class AdminPanel extends React.Component {
         $('#inputMail').val(userData.email);
     }
 
-    showUpdateRooms(userData) {        
+    showUpdateSubjectPanel(subjectData) {
+        $('#inputIdSubject').val(subjectData._id);
+        $('#inputNameSubject').val(subjectData.name);
+        $('#inputSpaceSubject').val(subjectData.space);
+        $('#inputConnectionsSubject').val(subjectData.connections);
+    }
+
+    showUpdateRooms(userData) {
         $('#userIdForRoom').val(userData._id);
+        this.triggerChildCheckboxUpdate(userData.subjects);
+    }
+
+    triggerChildCheckboxUpdate(subjects) {
+        this.refs.updateRoomsChild.updateCheckbox(subjects);
     }
 
     render() {
-        var items = this.state.users;
+        var users = this.state.users;
+        var subjects = this.state.subjects;
         return (
             <div>
                 <table className="table table-bordered">
+                    <thead className="thead-dark">
+                        <tr className="elems-align">
+                            <th scope="align-middle col" colspan="5">USUARIOS</th>
+                        </tr>
+                    </thead>
                     <thead className="thead-dark">
                         <tr className="elems-align">
                             <th scope="align-middle col">Nombre</th>
@@ -94,7 +128,7 @@ export default class AdminPanel extends React.Component {
                     </thead>
 
                     <tbody>
-                    {items.map((item, index) => {
+                    {users.map((item, index) => {
                         return(
                         <tr className="elems-align" key={index}>
                             <td className="align-middle">
@@ -135,18 +169,67 @@ export default class AdminPanel extends React.Component {
                         )
                     })}
                     </tbody>
+                    <div>
+                        <br />
+                    </div>
+                    <thead className="thead-dark">
+                        <tr className="elems-align">
+                            <th scope="align-middle" colspan="5">SALAS</th>
+                        </tr>
+                    </thead>
+                    <thead className="thead-dark">
+                        <tr className="elems-align">
+                            <th scope="align-middle" colspan="2">Nombre</th>
+                            <th scope="align-middle" colspan="1">Capacidad</th>
+                            <th scope="align-middle" colspan="1">Conectados</th>
+                            <th scope="align-middle" colspan="1">U D</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {subjects.map((item, index) => {
+                        return(
+                        <tr className="elems-align" key={index}>
+                            <td className="align-middle" colspan="2">
+                                {item.name}
+                            </td>
+                            <td className="align-middle" colspan="1">
+                                {item.space}
+                            </td>
+                            <td className="align-middle" colspan="1">
+                                {item.connections}
+                            </td>
+                            <td className="align-middle">
+                                <div className="row justify-content-center">
+                                    <div className="col-4">
+                                        <span className="far fa-edit fa-2x pointer-span" data-toggle="modal" data-target="#updateSubjectModal" onClick={((e) => this.showUpdateSubjectPanel(item))}></span>
+                                    </div>
+                                    <div className="col-4">
+                                        <span className="fas fa-eraser fa-2x pointer-span" onClick={((e) => this.deleteSubject(e, item))}></span>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        )
+                    })}
+                    </tbody>
 
                 </table>
-                <div className="text-center">
-                    <button type="button" className="btn btn-outline-dark" data-toggle="modal" data-target="#createModal">Nuevo Usuario</button>
+                <div className="row">
+                    <div className="offset-md-5 col-md-4">
+                        <button type="button" className="btn btn-outline-dark btn-block" data-toggle="modal" data-target="#createModal">Nuevo Usuario</button>
+                    </div>
                 </div>
-                <div className="text-center">
-                    <button type="button" className="btn btn-outline-dark" data-toggle="modal" data-target="#addRoomModal">Nueva Sala</button>
+                <div className="row">
+                    <div className="offset-md-5 col-md-4">
+                        <button type="button" className="btn btn-outline-dark btn-block" data-toggle="modal" data-target="#addRoomModal">Nueva Sala</button>
+                    </div>
                 </div>
 
                 <ChangeUserModal update={this.updateUser} />
+                <ChangeSubjectModal update={this.updateSubject} />
                 <CreateUserModal create={this.createUser} />
-                <UpdateRoomsModal updateUserRooms={this.updateUserRooms} subjects={this.state.subjects} />
+                <UpdateRoomsModal ref="updateRoomsChild" updateUserRooms={this.updateUserRooms} subjects={this.state.subjects} />
                 <AddRoomModal addRoom={this.addRoom} />
             </div>
         )

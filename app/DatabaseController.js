@@ -13,7 +13,9 @@ class DatabaseController {
         this.findAllUsers = this.findAllUsers.bind(this);
         this.findAllSubjects = this.findAllSubjects.bind(this);
         this.deleteUser = this.deleteUser.bind(this);
+        this.deleteSubject = this.deleteSubject.bind(this);
         this.updateUser = this.updateUser.bind(this);
+        this.updateSubject = this.updateSubject.bind(this);
         this.updateUserRooms = this.updateUserRooms.bind(this);
         this.addUser = this.addUser.bind(this);
         this.addSubject = this.addSubject.bind(this);
@@ -23,9 +25,11 @@ class DatabaseController {
         this.socket.on('findSubjectByName', this.findSubjectByName);
         this.socket.on('deleteUser', this.deleteUser);
         this.socket.on('updateUser', this.updateUser);
+        this.socket.on('updateSubject', this.updateSubject);
         this.socket.on('updateUserRooms', this.updateUserRooms);
         this.socket.on('createUser', this.addUser);
         this.socket.on('addRoom', this.addSubject);
+        this.socket.on('deleteSubject', this.deleteSubject);
     }
 
     findAllUsers() {
@@ -34,6 +38,10 @@ class DatabaseController {
                 this.connection.sockets.connected[this.adminId].emit('userList', usersSub);
             })
         });
+    }
+
+    setAdminId(id) {
+      this.adminId = id;
     }
 
     findUserByName(name) {
@@ -68,38 +76,54 @@ class DatabaseController {
     deleteUser(id) {
         this.userModel.findByIdAndRemove(id, (err, user) => {
             if (err) return err;
-            const msg = "Usuario " + user.username + " eliminado correctamen.";
-            this.connection.sockets.connected[this.adminId].emit('deleted', msg);
+            const msg = "Usuario " + user.username + " eliminado correctamente.";
+            for (var i in this.connection.sockets.connected) {
+                this.connection.sockets.connected[i].emit('deleted', msg);
+            }
+        });
+    }
+
+    deleteSubject(id) {
+      console.log(this.subjectsModel);
+        this.subjectsModel.findByIdAndRemove(id, (err, subject) => {
+            if (err) return err;
+            const msg = "Sala " + subject.name + " eliminada correctamente.";
+            for (var i in this.connection.sockets.connected) {
+                this.connection.sockets.connected[i].emit('deleted', msg);
+            }
         });
     }
 
     addUser(req) {
-        console.log(this.userModel);
+        console.log(req);
+        var msg = "Se ha creado el usuario " + req.username;
         const newUser = new this.userModel(req);
         newUser.save((err) => {
             if (err) {
                 return err;
             }
             else {
-                this.connection.sockets.connected[this.adminId].emit('updatedUser');
+                for (var i in this.connection.sockets.connected) {
+                    this.connection.sockets.connected[i].emit('updatedUser', msg);
+                }
             }
 
         })
     }
 
     addSubject(req) {
-        const newSubject = new this.subjectsModel(req);                     
+        const newSubject = new this.subjectsModel(req);
         newSubject.save((err) => {
-            if (err) { 
+            if (err) {
                 return err;
             } else {
                 this.findAllSubjects();
             }
-        });    
+        });
     }
 
     updateUser(data) {
-        console.log(data);
+        var msg = "Se ha actualizado la información del usuario";
         this.userModel.findOneAndUpdate({_id: data.id}, {
             "$set": {
                 "username": data.username,
@@ -112,14 +136,35 @@ class DatabaseController {
                 return;
             }
             else {
-                this.connection.sockets.connected[this.adminId].emit('updatedUser');
+                for (var i in this.connection.sockets.connected) {
+                    this.connection.sockets.connected[i].emit('updatedUser', msg);
+                }
             }
         });
     }
 
-    updateUserRooms(data) {
-        console.log(data);
+    updateSubject(data) {
+      var msg = "Se ha actualizado la información de la sala.";
+      this.subjectsModel.findOneAndUpdate({_id: data.id}, {
+          "$set": {
+              "name": data.name,
+              "space": data.space,
+              "connections": data.connections
+          }
+      }).exec((err, user) => {
+          if (err) {
+              console.log(err);
+              return;
+          }
+          else {
+              for (var i in this.connection.sockets.connected) {
+                  this.connection.sockets.connected[i].emit('updatedSubjects', msg);
+              }
+          }
+      });
+    }
 
+    updateUserRooms(data) {
         this.userModel.findOneAndUpdate({_id: data.idUser}, {
             "$set": {
                 "subjects": data.idRooms
@@ -130,7 +175,10 @@ class DatabaseController {
                 return;
             }
             else {
-                this.connection.sockets.connected[this.adminId].emit('updatedUser');
+                var msg = "Se han actualizado las salas del usuario.";
+                for (var i in this.connection.sockets.connected) {
+                    this.connection.sockets.connected[i].emit('updatedUser', msg);
+                }
             }
         });
     }

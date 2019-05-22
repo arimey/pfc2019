@@ -6,5 +6,7 @@ import RoomsView from './components/RoomsView.jsx';
 $(document).ready(() => {
     var subj = $('#subjects').val();
     subj = JSON.parse(subj);
-    ReactDOM.render(<RoomsView subjects={subj} />, document.getElementById('root'));
+    var userName = $('#userName').val();    
+    var socket = io('/roomSpace');
+    ReactDOM.render(<RoomsView subjects={subj} con={socket} user={userName} />, document.getElementById('root'));
 });

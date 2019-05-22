@@ -264,7 +264,8 @@ class MediasoupController {
                     var audio = document.createElement('audio');
                     let stream = new MediaStream();
                     stream.addTrack(track);
-                    audio.src = window.URL.createObjectURL(stream);
+                    //audio.src = window.URL.createObjectURL(stream);
+                    audio.srcObject=stream;
                     audio.play();
                     $("#videoCaptureDiv").append(audio);
                 }

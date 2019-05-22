@@ -11,20 +11,34 @@ var fs = require('fs');
 var session = require('express-session');
 var configDB = require('./config/database.js');
 var salas = [];
-var app_port = process.env.PORT || 3000;
+var app_port = process.env.PORT || 8080;
 var app_host = process.env.HOST || '127.0.0.1';
 var optSSL = {
 	key : fs.readFileSync('./keys/campus.key'),
 	cert : fs.readFileSync('./keys/campus.crt')
 }
 
-var server = require('https').createServer(optSSL, app);
-var io = require('socket.io')(server);
+var SubjectRooms = require('./app/models/subjects.js');
+var UserRooms = require('./app/models/users.js');
+
+//var server = require('https').createServer(optSSL, app);
+var server = require('http').Server(app);
 
 var pubIp = require('public-ip');
 var privIp = require('quick-local-ip');
 
 require('./config/passport.js')(passport);
+
+
+//server.listen(app_port);
+/*const server = app.listen(process.env.PORT || 8080, () => {
+		const host = server.address().address;
+		const port = server.address().port;
+
+		console.log("Example app listening at http://" + host + port);
+});*/
+
+var io = require('socket.io')(server);
 
 mongoose.connect(configDB.url, { useMongoClient: true });
 mongoose.Promise = require('bluebird');
@@ -39,9 +53,13 @@ db.once('open', function() {
 
 app.engine('html', require('ejs').renderFile);
 
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(session({ secret: 'ilovescotchscotchyscotchscotch' }));
+app.use(bodyParser.json());
+
+app.use(session({ secret: 'ilovescotchscotchyscotchscotch',
+									saveUninitialized: true,
+									resave: true}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -50,6 +68,7 @@ app.use('/src', express.static(__dirname + '/src'));
 
 var dbController = require('./app/DatabaseController.js');
 var dbControllerOb;
+var dbControllerRoom;
 
 
 var mediasoupRooms = require("./app/mediasoupTransport.js");
@@ -60,6 +79,19 @@ var peerSocket = new Map();
 var presentationUrls = new Map();
 var roomPdf = new Map();
 
+var roomSpace = io.of('/roomSpace');
+
+roomSpace.on('connection', function(socket) {
+	socket.on('findAllSubjectsForUser', function(userName, callback) {
+		console.log(callback);
+		UserRooms.find({ username: userName }, (err, user) => {
+				if (err) throw err;
+				SubjectRooms.populate(user, {path: "subjects"}, (err, userS) => {
+					callback(userS[0].subjects);
+				})
+		});
+	})
+});
 
 io.on('connection', function(client) {
 	console.log('Client ' + client.id + ' connected to socket.');
@@ -143,10 +175,12 @@ io.on('connection', function(client) {
 
 
 	client.on("sendingPresentation", (data) => {
+		console.log("ENVIANDO PRESENTACION");
+		console.log(data);
 		presentationUrls.set(data.key, data.val);
 		io.sockets.in(data.key).emit('newPresentation', data.val);
 	});
-
+socketPeer
 	client.on("newUserState", (data) => {
 		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
 		let roomId = idRoomSocket.get(client.id);
@@ -184,8 +218,26 @@ io.on('connection', function(client) {
 
 	client.on("disconnect", () => {
 		let peer = socketPeer.get(client.id);
+		let roomName = idRoomSocket.get(client.id);
+		//si el roomname está vacío no hacer nada
+		//crear conexión en la web de Salas
+		//actualizar las salas cada x conexiones y desconexiones
+		if (roomName) {
+			var Subject = require('./app/models/subjects');
+			Subject.find({name: roomName}, (err, subjectItem) => {
+				if (err) throw err;
+				var connections = subjectItem[0].connections - 1;
+				Subject.findOneAndUpdate({name: roomName}, {
+						"$set": {
+								"connections": connections,
+						}
+				}).exec();
+			});
+		}
 		socketPeer.delete(client.id);
 		peerSocket.delete(peer);
+		idRoomSocket.delete(client.id);
+
 		/*let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
 		var nombre = socketPeer.get(client.id);
 		if (typeof nombre !== "undefined") {
@@ -197,15 +249,13 @@ io.on('connection', function(client) {
 	});
 });
 
-
-
-
-
-
 require('./app/routes.js')(app, passport);
 
-server.listen(app_port);
-console.log('Server running on http://%s:%s', app_host, app_port);
+const PORT = process.env.PORT || 8080;
+  server.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
+    console.log('Press Ctrl+C to quit.');
+  });
 
 pubIp.v4().then(ip => {
 	console.log("pub ip:" + ip);
