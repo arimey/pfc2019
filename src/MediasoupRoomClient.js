@@ -274,7 +274,7 @@ class MediasoupController {
                     console.log(track);
                     let stream = new MediaStream();
                     stream.addTrack(track);
-                    video.src = window.URL.createObjectURL(stream);
+                    video.srcObject = stream;
                     video.play();
                 }
             })

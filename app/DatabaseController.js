@@ -148,8 +148,7 @@ class DatabaseController {
       this.subjectsModel.findOneAndUpdate({_id: data.id}, {
           "$set": {
               "name": data.name,
-              "space": data.space,
-              "connections": data.connections
+              "space": data.space,              
           }
       }).exec((err, user) => {
           if (err) {

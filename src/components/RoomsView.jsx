@@ -14,7 +14,7 @@ export default class RoomsView extends React.Component {
 		$("[id='Panel Administración']").text('Entrar');
 		$("[id='Panel Administración']").attr('class', 'badge badge-primary');
 		this.getStatesRooms();
-		this.interval = setInterval(() => this.getStatesRooms(), 1000);
+		this.interval = setInterval(() => this.getStatesRooms(), 3000);
 	}
 
 	componentWillUnmount() {

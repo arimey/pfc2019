@@ -12,8 +12,7 @@ class MediasoupRoomTransport extends EventEmitter {
         this._peers = new Map();
         this._activePeers = new Map();
         this._socketPeers = new Map();
-
-        //Se intenta crear una Room en el servidor con la configuración de los codecs
+        
         try {
             this._mediaRoom = mediasoupServer.Room(config);
         }

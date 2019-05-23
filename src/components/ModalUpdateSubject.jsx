@@ -12,8 +12,7 @@ export default class ModalUpdateSubject extends React.Component {
         let data = {
             id: $('#inputIdSubject').val(),
             name: $('#inputNameSubject').val(),
-            space: $('#inputSpaceSubject').val(),
-            connections: $('#inputConnectionsSubject').val()
+            space: $('#inputSpaceSubject').val(),            
         }
         this.props.update(data);
     }
@@ -38,13 +37,6 @@ export default class ModalUpdateSubject extends React.Component {
                                     <span className="input-group-text" id="inputGroup-sizing-sm">Límite</span>
                                 </div>
                                 <input type="text" id="inputSpaceSubject" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
-                                <input id="inputIdSubject" type="hidden" />
-                            </div>
-                            <div className="input-group input-group-sm mb-3">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text" id="inputGroup-sizing-sm">Conexiones</span>
-                                </div>
-                                <input type="text" id="inputConnectionsSubject" className="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                                 <input id="inputIdSubject" type="hidden" />
                             </div>
                         </div>

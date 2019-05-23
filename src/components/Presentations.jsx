@@ -21,12 +21,7 @@ export default class Presentation extends React.Component {
 	}
 
 	componentDidMount() {
-		$('#sendPresentation').click(() => {
-			//let url = $('#urlPresentation').val();
-			//this.props.con.emit('sendingPresentation', {key: $('#room').val(), val: url});
-		});
 		inputFile.addEventListener('change', (file) => {
-			alert("HA CAMBIADO");
 			this.pageNum = 1;
 			this.pagesCanvas = [];
 			this.setState({presentation: "", num: 0});

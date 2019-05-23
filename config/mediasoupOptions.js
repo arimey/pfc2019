@@ -5,11 +5,9 @@ const options = {
   numWorkers      : 1,
   logLevel        : 'warn',
   logTags         : ['info', 'ice', 'dlts', 'rtp', 'srtp', 'rtcp', 'rbe', 'rtx'],
-
+  rtcIPv4         : ipPriv,
+  rtcAnnouncedIPv4: "35.242.182.167",
   rtcIPv6         : false,
-  /*rtcMinPort      : 20000,
-  rtcMaxPort      : 20100,*/
- 
 }
 
 

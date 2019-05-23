@@ -21,22 +21,13 @@ var optSSL = {
 var SubjectRooms = require('./app/models/subjects.js');
 var UserRooms = require('./app/models/users.js');
 
-//var server = require('https').createServer(optSSL, app);
-var server = require('http').Server(app);
+var server = require('https').createServer(optSSL, app);
+//var server = require('http').Server(app);
 
 var pubIp = require('public-ip');
 var privIp = require('quick-local-ip');
 
 require('./config/passport.js')(passport);
-
-
-//server.listen(app_port);
-/*const server = app.listen(process.env.PORT || 8080, () => {
-		const host = server.address().address;
-		const port = server.address().port;
-
-		console.log("Example app listening at http://" + host + port);
-});*/
 
 var io = require('socket.io')(server);
 
@@ -48,7 +39,7 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 db.once('open', function() {
-	console.log('CONECTADOS A LA BASE DE DATOS');
+	console.log('connected at database');
 })
 
 app.engine('html', require('ejs').renderFile);
@@ -60,6 +51,7 @@ app.use(bodyParser.json());
 app.use(session({ secret: 'ilovescotchscotchyscotchscotch',
 									saveUninitialized: true,
 									resave: true}));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -78,15 +70,25 @@ var socketPeer = new Map();
 var peerSocket = new Map();
 var presentationUrls = new Map();
 var roomPdf = new Map();
+var connectionCountsRoom = new Map();
 
 var roomSpace = io.of('/roomSpace');
 
 roomSpace.on('connection', function(socket) {
+
 	socket.on('findAllSubjectsForUser', function(userName, callback) {
-		console.log(callback);
 		UserRooms.find({ username: userName }, (err, user) => {
 				if (err) throw err;
 				SubjectRooms.populate(user, {path: "subjects"}, (err, userS) => {
+					userS[0].subjects.map((item, index) => {
+						if (connectionCountsRoom.has(item.name) && connectionCountsRoom.get(item.name) > 0) {
+							userS[0].subjects[index].connections = connectionCountsRoom.get(item.name);
+						} else {
+							userS[0].subjects[index].connections = 0;
+							resetPdfRoom(item.name);
+						}
+						console.log(userS[0].subjects[index]);
+					});
 					callback(userS[0].subjects);
 				})
 		});
@@ -95,16 +97,14 @@ roomSpace.on('connection', function(socket) {
 
 io.on('connection', function(client) {
 	console.log('Client ' + client.id + ' connected to socket.');
-
+	client.emit("connected", "Conexión realizada");
 	client.on('adminConecting', () => {
 		dbControllerOb = new dbController(io, client, client.id);
 	});
 
-	//Se recibe este mensaje cada vez que un cliente entra en una sala
-	//Se busca la Room por si ya ha sido creada anteriormente
-	//De ser así, incluye al nuevo usuario, sino, crea una nueva Room con el id de la sala
 	client.on('startMediasoup', function(roomId) {
 		console.log(roomId);
+		changeRoomUsersCount(roomId, 1);
 		if (!mediasoupRoomsMap.has(roomId)) {
 			try {
 				var room = new mediasoupRooms(roomId, mediasoup, io);
@@ -168,15 +168,12 @@ io.on('connection', function(client) {
 
 	client.on("peerLeaving", (peerName) => {
 		let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
-		console.log("Cerrando peer 111");
 		roomLocal.closePeer(peerName);
 	});
 
 
 
 	client.on("sendingPresentation", (data) => {
-		console.log("ENVIANDO PRESENTACION");
-		console.log(data);
 		presentationUrls.set(data.key, data.val);
 		io.sockets.in(data.key).emit('newPresentation', data.val);
 	});
@@ -219,35 +216,31 @@ socketPeer
 	client.on("disconnect", () => {
 		let peer = socketPeer.get(client.id);
 		let roomName = idRoomSocket.get(client.id);
-		//si el roomname está vacío no hacer nada
-		//crear conexión en la web de Salas
-		//actualizar las salas cada x conexiones y desconexiones
+
 		if (roomName) {
-			var Subject = require('./app/models/subjects');
-			Subject.find({name: roomName}, (err, subjectItem) => {
-				if (err) throw err;
-				var connections = subjectItem[0].connections - 1;
-				Subject.findOneAndUpdate({name: roomName}, {
-						"$set": {
-								"connections": connections,
-						}
-				}).exec();
-			});
+			changeRoomUsersCount(roomName, -1);
 		}
 		socketPeer.delete(client.id);
 		peerSocket.delete(peer);
 		idRoomSocket.delete(client.id);
 
-		/*let roomLocal = mediasoupRoomsMap.get(idRoomSocket.get(client.id));
-		var nombre = socketPeer.get(client.id);
-		if (typeof nombre !== "undefined") {
-			console.log("Se ha desconectado: " + nombre);*
-			//room.closePeer(nombre);
-
-		}*/
-
 	});
 });
+
+function changeRoomUsersCount(roomId, count)
+{
+	if (!connectionCountsRoom.has(roomId)) {
+		connectionCountsRoom.set(roomId, 1);
+	} else {
+		var actualConnectionsRoom = connectionCountsRoom.get(roomId) + (count);
+		connectionCountsRoom.set(roomId, actualConnectionsRoom);
+	}
+}
+
+function resetPdfRoom(roomId)
+{
+	roomPdf.delete(roomId);
+}
 
 require('./app/routes.js')(app, passport);
 

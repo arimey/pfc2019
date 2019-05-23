@@ -54,8 +54,7 @@ export default class ToolsBox extends React.Component {
                         <button id="presentation" type="button" className="btn btn-outline-secondary" data-toggle="modal" data-target="#srcPresentation">Presentación</button>
                     </div>
                     :
-                    <div className="col-md-4 col-lg-4 text-center">
-                        <button id="getTurn" type="button" className="btn btn-outline-secondary">Petición</button>
+                    <div className="col-md-4 col-lg-4 text-center">                        
                     </div>}
             </div>
 		)

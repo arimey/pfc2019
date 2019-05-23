@@ -16,15 +16,18 @@ $(document).ready(() => {
 	var socket = io();
 	let roomId = $('#room').val();
 	resizeVideo(w, h);
-	mediasoupObj = new mediasoupApp(socket, roomId);
-	ReactDOM.render(<ConnectionBox con={socket}/>, document.getElementById('usersBox'));
-	ReactDOM.render(<Presentation con={socket} width={w} height={h} />, document.getElementById('board'));
-	ReactDOM.render(<ChatBox con={socket} />, document.getElementById('chatBox2'));
-	ReactDOM.render(<ToolsBox con={socket} permission={$("#userType").val()} />, document.getElementById('divTools'));
-	mediasoupObj.join();
-	window.onbeforeunload = () => {
-		mediasoupObj.quit();
-	}
+	socket.on('connected', function() {
+		$("#alertConnMsg").hide(1500);		
+		mediasoupObj = new mediasoupApp(socket, roomId);
+		ReactDOM.render(<ConnectionBox con={socket}/>, document.getElementById('usersBox'));
+		ReactDOM.render(<Presentation con={socket} width={w} height={h} />, document.getElementById('board'));
+		ReactDOM.render(<ChatBox con={socket} />, document.getElementById('chatBox2'));
+		ReactDOM.render(<ToolsBox con={socket} permission={$("#userType").val()} />, document.getElementById('divTools'));
+		mediasoupObj.join();
+		window.onbeforeunload = () => {
+			mediasoupObj.quit();
+		}
+	});
 
 
 	$('#formExit').submit(() => {

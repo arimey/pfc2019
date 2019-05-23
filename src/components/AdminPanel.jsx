@@ -36,7 +36,7 @@ export default class AdminPanel extends React.Component {
         this.socket.on('subjectList', this.updateViewSubjectsList);
         this.socket.on('deleted', this.showServerMsg);
         this.socket.on('updatedUser', this.showServerMsg);
-        this.socket.on('updatedSubjects', this.showServerMsg);        
+        this.socket.on('updatedSubjects', this.showServerMsg);
     }
 
 
@@ -179,9 +179,8 @@ export default class AdminPanel extends React.Component {
                     </thead>
                     <thead className="thead-dark">
                         <tr className="elems-align">
-                            <th scope="align-middle" colspan="2">Nombre</th>
+                            <th scope="align-middle" colspan="3">Nombre</th>
                             <th scope="align-middle" colspan="1">Capacidad</th>
-                            <th scope="align-middle" colspan="1">Conectados</th>
                             <th scope="align-middle" colspan="1">U D</th>
                         </tr>
                     </thead>
@@ -189,14 +188,11 @@ export default class AdminPanel extends React.Component {
                     {subjects.map((item, index) => {
                         return(
                         <tr className="elems-align" key={index}>
-                            <td className="align-middle" colspan="2">
+                            <td className="align-middle" colspan="3">
                                 {item.name}
                             </td>
                             <td className="align-middle" colspan="1">
                                 {item.space}
-                            </td>
-                            <td className="align-middle" colspan="1">
-                                {item.connections}
                             </td>
                             <td className="align-middle">
                                 <div className="row justify-content-center">

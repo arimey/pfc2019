@@ -5,8 +5,6 @@ var User = require('./models/users');
 module.exports = function(app, passport) {
 
 	app.get('/', function(req, res) {
-	  // try to initialize the db on every request if it's not already
-	  // initialized.
 	  res.render('identificacion.html', { message: req.flash('loginMessage') });
 
 	});
@@ -62,25 +60,8 @@ module.exports = function(app, passport) {
 
 	app.get('/sala/:id', function(req, res) {
 		if (req.params.id === 'Panel Administración') {
-			console.log(req);
-			console.log(req.user);
 			res.render('adminRoom.html', {user: req.user.username});
 		} else {
-			console.log(req);
-			console.log(req.user);
-			updateRoomNumberConnections(req.params.id);
-				/*var Subject = require('./models/subjects');
-				Subject.find({name: req.params.id},)
-				Subject.findOneAndUpdate({name: req.params.id}, {
-						"$set": {
-								"state": 'Online',
-						}
-				}).exec((err, user) => {
-					if (err) {
-							console.log(err);
-							return;
-					}
-				});*/
 				res.render('indexMediasoup.html', { user: req.user.username, room: req.params.id, permission: req.user.userType });
 		}
 	});
@@ -102,13 +83,6 @@ module.exports = function(app, passport) {
 		req.logout();
 		res.redirect('/');
 	})
-
-
-	/*app.use(function(req, res, next) {
-		var err = new Error('File Not Found');
-		err.status = 404;
-		next(err);
-	});*/
 
 }
 
